@@ -1,6 +1,36 @@
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useDrop, useDragLayer } from 'react-dnd';
+import { DraggableBox } from './DraggableBox';
+import { useEditorStore } from '../stores/canvasStore';
+import { shallow } from 'zustand/shallow';
+import { ItemTypes } from './ItemTypes';
 
-const CanvasContainer = () => {
+const NO_OF_GRIDS = 43;
+const CanvasContainer = ({
+  canvasWidth,
+  mode,
+  snapToGrid,
+  onComponentClick,
+  onEvent,
+  appDefinition,
+  appDefinitionChanged,
+  onComponentOptionChanged,
+  onComponentOptionsChanged,
+  appLoading,
+  setSelectedComponent,
+  zoomLevel,
+  removeComponent,
+  deviceWindowWidth,
+  selectedComponents,
+  darkMode,
+  socket,
+  handleUndo,
+  handleRedo,
+  onComponentHover,
+  hoveredComponent,
+  sideBarDebugger,
+  currentPageId
+}) => {
   const { currentLayout } = useEditorStore(
     state => ({
       currentLayout: state?.currentLayout
@@ -272,9 +302,10 @@ const CanvasContainer = () => {
       }}
       // ref={drop}
       style={{ ...styles, height: '100%' }}
-      className={cx('real-canvas', {
-        'show-grid': isDragging || isResizing
-      })}
+      // className={cx('real-canvas', {
+      //   'show-grid': isDragging || isResizing
+      // })}
+      className={`real-canvas ${(isDragging || isResizing) && 'show-grid'}`}
       // className="real-canvas show-grid"
       id="real-canvas"
       data-cy="real-canvas"

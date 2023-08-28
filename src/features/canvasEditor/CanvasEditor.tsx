@@ -1,12 +1,42 @@
 import { DndProvider } from 'react-dnd';
+import { createRef, useEffect, useState, useRef } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Button, Typography } from 'antd';
+import { ComponentManager } from './component/ComponentManager';
+import { componentTypes } from '../widgetsManager/component';
+import CanvasContainer from './component/CanvasContainer';
+import { CustomDraggerLayer } from './component/CustomDraggerLayer';
+// import { useEditorStore } from './stores/canvasStore';
+import { isEqual, debounce } from 'lodash';
+import { v4 as uuid } from 'uuid';
+
+const defaultDefinition = {
+  showViewerNavigation: true,
+  homePageId: 1,
+  pages: {
+    1: {
+      components: {},
+      handle: 'home',
+      name: 'Home'
+    }
+  },
+  globalSettings: {
+    hideHeader: false,
+    appInMaintenance: false,
+    canvasMaxWidth: 1292,
+    canvasMaxWidthType: 'px',
+    canvasMaxHeight: 2400,
+    canvasBackgroundColor: '#edeff5',
+    backgroundFxQuery: ''
+  }
+};
 
 const CanvasEditor = () => {
-  const defaultPageId = uuid();
+  // const defaultPageId = uuid();
   const canvasContainerRef = createRef();
   const downloadRef = createRef();
   const selectionRef = useRef();
-  const [isDragging, setIsDragging] = useState(false);
+  // const [isDragging, setIsDragging] = useState(false);
   const [appDefinition, setAppDefinition] = useState(defaultDefinition);
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [selectedComponent, setSelectedComponent] = useState({});
@@ -15,13 +45,13 @@ const CanvasEditor = () => {
   const [zoomLevel, setZoomLevel] = useState(1.0);
   const [rendering, setRendering] = useState(false);
 
-  const getCanvasWidth = () => {
-    const canvasBoundingRect = document
-      .getElementsByClassName('canvas-area')[0]
-      ?.getBoundingClientRect();
-    console.log('canvasBoundingRect', canvasBoundingRect);
-    return canvasBoundingRect?.width;
-  };
+  // const getCanvasWidth = () => {
+  //   const canvasBoundingRect = document
+  //     .getElementsByClassName('canvas-area')[0]
+  //     ?.getBoundingClientRect();
+  //   console.log('canvasBoundingRect', canvasBoundingRect);
+  //   return canvasBoundingRect?.width;
+  // };
 
   // getCanvasWidth();
   useEffect(() => {
@@ -190,7 +220,7 @@ const CanvasEditor = () => {
                   >
                     {rendering && (
                       <>
-                        <Container
+                        <CanvasContainer
                           canvasWidth={1090}
                           // socket={socket}
                           appDefinition={appDefinition}
@@ -222,7 +252,9 @@ const CanvasEditor = () => {
                         <CustomDraggerLayer
                           snapToGrid={true}
                           canvasWidth={1090}
-                          onDragging={isDragging => setIsDragging(isDragging)}
+                          onDragging={() => {
+                            console.log('dragging');
+                          }}
                         />
                       </>
                     )}

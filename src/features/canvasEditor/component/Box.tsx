@@ -35,7 +35,7 @@ const AllComponents: {
   Form
 };
 
-const BoxComponent = (props: Props) => {
+const Box = (props: Props) => {
   const {
     id,
     inCanvas,
@@ -207,4 +207,4 @@ const BoxComponent = (props: Props) => {
   );
 };
 
-export default BoxComponent;
+export default Box;
