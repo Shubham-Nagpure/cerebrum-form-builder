@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useDrop, useDragLayer } from 'react-dnd';
-import { DraggableBox } from './DraggableBox';
-import { useEditorStore } from '../stores/canvasStore';
+import { DraggableBox } from '../componentManager/DraggableBox';
+import { useEditorStore } from '../../stores/canvasStore';
 import { shallow } from 'zustand/shallow';
-import { ItemTypes } from './ItemTypes';
+import { ItemTypes } from '../componentManager/ItemTypes';
 
 const NO_OF_GRIDS = 43;
 const CanvasContainer = ({

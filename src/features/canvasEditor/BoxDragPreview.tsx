@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import { memo, useState, useEffect } from 'react';
 
 export const BoxDragPreview = memo(({ item, canvasWidth }) => {
   const [tickTock, setTickTock] = useState(false);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Tooltip } from 'antd';
-import { CustomButton as Button } from '../../coreComponent/Button';
-import { CustomForm as Form } from '../../coreComponent/Form';
+import { CustomButton as Button } from '../coreComponent/Button';
+import { CustomForm as Form } from '../coreComponent/Form';
 
 type Props = {
   id: number;

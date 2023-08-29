@@ -5,7 +5,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import { ItemTypes } from './ItemTypes';
 import Box from './Box';
 import cx from 'classnames';
-import { useEditorStore } from '../stores/canvasStore';
+import { useEditorStore } from '../../stores/canvasStore';
 // import { useEditorStore } from '../../_stores/canvasStore';
 import { shallow } from 'zustand/shallow';
 

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDragLayer } from 'react-dnd';
-import { ItemTypes } from './ItemTypes';
+import { ItemTypes } from '../componentManager/ItemTypes';
 import { BoxDragPreview } from './BoxDragPreview';
 import { shallow } from 'zustand/shallow';
-import { useEditorStore } from '../stores/canvasStore';
+import { useEditorStore } from '../../stores/canvasStore';
 const layerStyles = {
   position: 'fixed',
   pointerEvents: 'none',

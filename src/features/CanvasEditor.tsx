@@ -1,11 +1,12 @@
 import { DndProvider } from 'react-dnd';
 import { createRef, useEffect, useState, useRef } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 import { Button, Typography } from 'antd';
-import { ComponentManager } from './component/ComponentManager';
-import { componentTypes } from '../widgetsManager/component';
-import CanvasContainer from './component/CanvasContainer';
-import { CustomDraggerLayer } from './component/CustomDraggerLayer';
+import { ComponentManager } from './componentManager/ComponentManager';
+import { componentTypes } from './widgetsManager/component';
+import CanvasContainer from './canvasEditor/CanvasContainer';
+import { CustomDraggerLayer } from './canvasEditor/CustomDraggerLayer';
 // import { useEditorStore } from './stores/canvasStore';
 import { isEqual, debounce } from 'lodash';
 import { v4 as uuid } from 'uuid';
@@ -45,15 +46,6 @@ const CanvasEditor = () => {
   const [zoomLevel, setZoomLevel] = useState(1.0);
   const [rendering, setRendering] = useState(false);
 
-  // const getCanvasWidth = () => {
-  //   const canvasBoundingRect = document
-  //     .getElementsByClassName('canvas-area')[0]
-  //     ?.getBoundingClientRect();
-  //   console.log('canvasBoundingRect', canvasBoundingRect);
-  //   return canvasBoundingRect?.width;
-  // };
-
-  // getCanvasWidth();
   useEffect(() => {
     const run = debounce(() => {
       setRendering(true);
@@ -179,7 +171,7 @@ const CanvasEditor = () => {
         <Button onClick={() => exportApp()}>Export App</Button>
       </div>
       <div className="editor wrapper">
-        <DndProvider backend={HTML5Backend}>
+        <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
           <div className="sub-section">
             <div className={`main main-editor-canvas `} id="main-editor-canvas">
               <div
