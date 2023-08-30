@@ -1,4 +1,6 @@
-export const widgets = [
+import { Widget } from './component';
+
+export const widgets: Widget[] = [
   {
     name: 'Button',
     displayName: 'Button',

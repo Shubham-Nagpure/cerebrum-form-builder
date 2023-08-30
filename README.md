@@ -11,6 +11,18 @@ pnpm is a ordinary version of pnpm, which needs Node.js to run.
 npm install -g pnpm
 ```
 
+# PNPM INstalling the node_modules
+
+```bash
+pnpm install
+```
+
+# PNPM Running the app
+
+```bash
+pnpm run dev
+```
+
 # VS Code Plugin Setup
 
 ```bash
