@@ -1,22 +1,25 @@
-import { memo, useState, useEffect } from 'react';
+import { memo } from 'react';
+import { IWidgetItem, Size } from './types';
 
-export const BoxDragPreview = memo(({ item, canvasWidth }) => {
-  const [tickTock, setTickTock] = useState(false);
-  useEffect(
-    function subscribeToIntervalTick() {
-      const interval = setInterval(() => setTickTock(!tickTock), 500);
-      return () => clearInterval(interval);
-    },
-    [tickTock]
-  );
+type Props = {
+  item: IWidgetItem;
+  canvasWidth: number;
+};
 
+export const BoxDragPreview = memo(({ item, canvasWidth }: Props) => {
   const layouts = item.layouts;
-  let { width, height } = layouts ? 100 : {};
+  let { width, height }: Size = item.component.defaultSize;
+
+  if (layouts) {
+    width = 100;
+    height = 100;
+  }
 
   if (item.id === undefined) {
     width = item.component.defaultSize.width;
     height = item.component.defaultSize.height;
   }
+
   return (
     <div
       className="resizer-active draggable-box"

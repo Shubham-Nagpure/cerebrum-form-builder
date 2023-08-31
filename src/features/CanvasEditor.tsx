@@ -1,8 +1,6 @@
 import { DndProvider } from 'react-dnd';
-import { createRef, useEffect, useState, useRef } from 'react';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useEffect, useState, useRef } from 'react';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { Button, Typography } from 'antd';
 import { ComponentManager } from './componentManager/ComponentManager';
 import { componentTypes } from './widgetsManager/component';
 import CanvasContainer from './canvasEditor/CanvasContainer';
@@ -10,6 +8,7 @@ import { CustomDraggerLayer } from './canvasEditor/CustomDraggerLayer';
 // import { useEditorStore } from './stores/canvasStore';
 import { isEqual, debounce } from 'lodash';
 import { v4 as uuid } from 'uuid';
+import { IAppDefination } from './canvasEditor/types';
 
 const defaultDefinition = {
   showViewerNavigation: true,
@@ -33,11 +32,8 @@ const defaultDefinition = {
 };
 
 const CanvasEditor = () => {
-  // const defaultPageId = uuid();
-  const canvasContainerRef = createRef();
-  const downloadRef = createRef();
-  const selectionRef = useRef();
-  // const [isDragging, setIsDragging] = useState(false);
+  const canvasContainerRef = useRef();
+  const [isDragging, setIsDragging] = useState(false);
   const [appDefinition, setAppDefinition] = useState(defaultDefinition);
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [selectedComponent, setSelectedComponent] = useState({});
@@ -71,16 +67,9 @@ const CanvasEditor = () => {
   //   console.log("previeosu ststate", previous);
   // }, [previous]);
 
-  const appDefinitionChanged = (newDefinition, opts = {}) => {
+  const appDefinitionChanged = (newDefinition: IAppDefination, opts = {}) => {
     let currentPageId = currentPageID;
     if (isEqual(appDefinition, newDefinition)) return;
-    // if (config.ENABLE_MULTIPLAYER_EDITING && !opts.skipYmapUpdate) {
-    //   this.props.ymap?.set("appDef", {
-    //     newDefinition,
-    //     editingVersionId: this.props.editingVersion?.id,
-    //   });
-    // }
-
     if (opts?.versionChanged) {
       currentPageId = newDefinition.homePageId;
 
@@ -101,26 +90,7 @@ const CanvasEditor = () => {
       return;
     }
 
-    // produce(
-    //   this.state.appDefinition,
-    //   (draft) => {
-    //     draft.pages[currentPageId].components =
-    //       newDefinition.pages[currentPageId]?.components ?? {};
-    //   },
-    //   this.handleAddPatch
-    // );
-
     setAppDefinition({ ...newDefinition });
-    // this.setState(
-    //   {
-    //     isSaving: true,
-    //     appDefinition: newDefinition,
-    //     appDefinitionLocalVersion: uuid(),
-    //   },
-    //   () => {
-    //     if (!opts.skipAutoSave) this.autoSave();
-    //   }
-    // );
   };
 
   const handleComponentHover = id => {
@@ -130,8 +100,6 @@ const CanvasEditor = () => {
   const handleComponentClick = (id, component) => {
     setSelectedComponents({ id, component });
   };
-
-  console.log('Get the cnavas', document.getElementsByClassName('canvas-container'));
 
   const exportApp = () => {
     console.log('App Defination', appDefinition);
@@ -163,13 +131,8 @@ const CanvasEditor = () => {
     const href = URL.createObjectURL(blob);
   };
 
-  console.log('render', rendering);
   return (
     <>
-      <div className="d-flex flex-row justify-content-center">
-        <Typography.Title level={4}>Canvas</Typography.Title>
-        <Button onClick={() => exportApp()}>Export App</Button>
-      </div>
       <div className="editor wrapper">
         <DndProvider backend={TouchBackend} options={{ enableMouseEvents: true }}>
           <div className="sub-section">
@@ -214,23 +177,13 @@ const CanvasEditor = () => {
                       <>
                         <CanvasContainer
                           canvasWidth={1090}
-                          // socket={socket}
                           appDefinition={appDefinition}
                           appDefinitionChanged={appDefinitionChanged}
                           snapToGrid={true}
-                          // darkMode={this.props.darkMode}
                           mode={'edit'}
                           zoomLevel={zoomLevel}
                           deviceWindowWidth={100}
                           selectedComponents={selectedComponents}
-                          // appLoading={isLoading}
-                          // onEvent={handleEvent}
-                          // onComponentOptionChanged={
-                          //   handleOnComponentOptionChanged
-                          // }
-                          // onComponentOptionsChanged={
-                          //   handleOnComponentOptionsChanged
-                          // }
                           setSelectedComponent={setSelectedComponent}
                           // handleUndo={handleUndo}
                           // handleRedo={handleRedo}
@@ -245,7 +198,7 @@ const CanvasEditor = () => {
                           snapToGrid={true}
                           canvasWidth={1090}
                           onDragging={() => {
-                            console.log('dragging');
+                            setIsDragging(isDragging);
                           }}
                         />
                       </>
