@@ -2,10 +2,6 @@ import { useState } from 'react';
 import { DraggableBox } from './DraggableBox';
 import { IWidget } from '../widgetsManager/component';
 
-// type TComponent = {
-//   name: string;
-// };
-
 export const ComponentManager = ({
   componentTypes,
   zoomLevel
@@ -13,7 +9,8 @@ export const ComponentManager = ({
   componentTypes: IWidget[];
   zoomLevel: number;
 }) => {
-  const [filteredComponents, setFilteredComponents] = useState(componentTypes);
+  const [filteredComponents, setFilteredComponents] =
+    useState<Array<IWidget>>(componentTypes);
 
   const renderComponentCard = (component: IWidget, index: number) => {
     return (
@@ -46,7 +43,8 @@ export const ComponentManager = ({
       title: 'commonly used',
       items: []
     };
-    const commonItems = ['Button', 'Form'];
+
+    const commonItems: string[] = ['Button', 'Form'];
 
     filteredComponents.forEach(f => {
       if (commonItems.includes(f.name)) commonSection.items.push(f);
