@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Tooltip } from 'antd';
 import { CustomButton as Button } from '../coreComponent/Button';
 import { CustomForm as Form } from '../coreComponent/Form';
@@ -14,19 +14,12 @@ type Props = {
   onEvent: () => void;
   onComponentOptionChanged: () => void;
   onComponentOptionsChanged: () => void;
-  //   paramUpdated;
   changeCanDrag: boolean;
-  //   containerProps;
-  //   darkMode;
-  //   removeComponent;
   canvasWidth: number;
   mode: string;
-  //   customResolvables;
   parentId: number;
-  //   sideBarDebugger;
-  //   readOnly;
-  //   childComponents;
 };
+
 const AllComponents: {
   Button: () => JSX.Element;
   Form: () => JSX.Element;
@@ -66,8 +59,6 @@ const Box = (props: Props) => {
   const [renderStartTime, setRenderStartTime] = useState(new Date());
   const [resetComponent, setResetStatus] = useState(false);
 
-  const componentActions = useRef(new Set());
-
   useEffect(() => {
     if (resetComponent) setResetStatus(false);
   }, [resetComponent]);
@@ -87,15 +78,6 @@ const Box = (props: Props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify({})]);
-
-  //   function renderTooltip({ props, text }) {
-  //     if (text === '') return <></>;
-  //     return (
-  //       <Tooltip id="button-tooltip" {...props}>
-  //         {text}
-  //       </Tooltip>
-  //     );
-  //   }
 
   return (
     <Tooltip

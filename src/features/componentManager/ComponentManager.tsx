@@ -31,7 +31,7 @@ export const ComponentManager = ({ componentTypes, zoomLevel }) => {
       title: 'commonly used',
       items: []
     };
-    const commonItems = ['Button', 'Card', 'Table', 'Form'];
+    const commonItems = ['Button', 'Form'];
 
     filteredComponents.forEach(f => {
       if (commonItems.includes(f.name)) commonSection.items.push(f);

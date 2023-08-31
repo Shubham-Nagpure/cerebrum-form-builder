@@ -8,6 +8,8 @@ import cx from 'classnames';
 import { useEditorStore } from '../../stores/canvasStore';
 // import { useEditorStore } from '../../_stores/canvasStore';
 import { shallow } from 'zustand/shallow';
+import { IWidget } from '../widgetsManager/component';
+import { Layout } from '../canvasEditor/types';
 
 const getStyles = (isDragging, isSelectedComponent) => {
   console.log('isDragging', isDragging, isSelectedComponent);
@@ -20,6 +22,28 @@ const getStyles = (isDragging, isSelectedComponent) => {
   };
 };
 
+type Props = {
+  index: number;
+  component: IWidget;
+  id: number;
+  title: string;
+  parent: string;
+  layouts: Layout;
+  canvasWidth: number;
+  inCanvas: boolean;
+  isSelectedComponent: boolean;
+  mode: string;
+  draggingStatusChanged: (value: boolean) => void;
+  hoveredComponent: object;
+  setSelectedComponent: (id: number, component: IWidget) => void;
+  onDragStop: () => void;
+  onComponentClick: () => void;
+  allComponents: [];
+  onResizeStop: () => void;
+  zoomLevel: number;
+  childComponents?: object | null;
+  parentId?: number;
+};
 export const DraggableBox = ({
   index,
   component,
@@ -29,35 +53,26 @@ export const DraggableBox = ({
   layouts,
   canvasWidth,
   inCanvas,
-  className,
   isSelectedComponent,
   mode,
-  readOnly,
   draggingStatusChanged,
   hoveredComponent,
   setSelectedComponent,
-  onDragStop,
   onComponentClick,
   allComponents,
   onResizeStop,
-  zoomLevel,
-  childComponents = null,
-  parentId
-}) => {
+  zoomLevel
+}: Props) => {
   const [isResizing, setResizing] = useState(false);
   const [isDragging2, setDragging] = useState(false);
   const [canDrag, setCanDrag] = useState(true);
-  const [mouseOver, setMouseOver] = useState(false);
+  // const [mouseOver, setMouseOver] = useState(false);
 
-  const { currentLayout } = useEditorStore(
-    state => ({
-      currentLayout: state?.currentLayout
-    }),
-    shallow
-  );
-  useEffect(() => {
-    setMouseOver(hoveredComponent === id);
-  }, [hoveredComponent]);
+  const currentLayout = 'desktop';
+
+  // useEffect(() => {
+  //   setMouseOver(hoveredComponent === id);
+  // }, [hoveredComponent]);
   //   const currentState = useCurrentState();
 
   useEffect(() => {
@@ -84,6 +99,7 @@ export const DraggableBox = ({
     height: 500
   };
   const NO_OF_GRIDS = 43;
+  console.log(layouts);
   const layoutData = inCanvas ? layouts[currentLayout] || defaultData : defaultData;
 
   const gridWidth = canvasWidth / NO_OF_GRIDS;
@@ -232,7 +248,7 @@ export const DraggableBox = ({
             }}
             defaultSize={{}}
             className={`resizer ${
-              mouseOver || isResizing || isDragging2 || isSelectedComponent
+              isResizing || isDragging2 || isSelectedComponent
                 ? 'resizer-active'
                 : ''
             } `}
@@ -244,12 +260,10 @@ export const DraggableBox = ({
                 setDragging(true);
               }
             }}
-            resizeHandleClasses={
-              isSelectedComponent || mouseOver ? resizerClasses : {}
-            }
+            resizeHandleClasses={isSelectedComponent ? resizerClasses : {}}
             resizeHandleStyles={resizerStyles}
-            enableResizing={mode === 'edit' && !readOnly}
-            disableDragging={mode !== 'edit' || readOnly}
+            // enableResizing={mode === 'edit' && !readOnly}
+            // disableDragging={mode !== 'edit' || readOnly}
             onDragStop={(e, direction) => {
               setDragging(false);
               // onDragStop(e, id, direction, currentLayout, layoutData);
@@ -267,10 +281,10 @@ export const DraggableBox = ({
               role="DraggableBox"
               style={isResizing ? { opacity: 0.5 } : { opacity: 1 }}
             >
-              {mode === 'edit' &&
+              {/* {mode === 'edit' &&
                 !readOnly &&
                 (mouseOver || isSelectedComponent) &&
-                !isResizing && <h1>ConfigHandle</h1>}
+                !isResizing && <h1>ConfigHandle</h1>} */}
               <Box
                 component={component}
                 id={id}

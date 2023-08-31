@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { useDragLayer } from 'react-dnd';
 import { ItemTypes } from '../componentManager/ItemTypes';
 import { BoxDragPreview } from './BoxDragPreview';
-import { shallow } from 'zustand/shallow';
-import { useEditorStore } from '../../stores/canvasStore';
+
+import { IWidgetItem } from './types';
 const layerStyles = {
   position: 'fixed',
   pointerEvents: 'none',
@@ -14,7 +14,7 @@ const layerStyles = {
   height: '100%'
 };
 
-function snapToGrid(canvasWidth, x, y) {
+function snapToGrid(canvasWidth: number, x: number, y: number) {
   const gridX = canvasWidth / 43;
 
   const snappedX = Math.round(x / gridX) * gridX;
@@ -22,14 +22,39 @@ function snapToGrid(canvasWidth, x, y) {
   return [snappedX, snappedY];
 }
 
+type Props = {
+  delta: {
+    y: number;
+  };
+  item: IWidgetItem;
+  initialOffset: {
+    x: number;
+    y: number;
+  };
+  currentOffset: {
+    x: number;
+    y: number;
+  };
+  currentLayout: string;
+  initialClientOffset: {
+    x: number;
+    y: number;
+  };
+  canvasWidth: number;
+};
+type XYCoor = {
+  x: number | undefined;
+  y: number | undefined;
+};
+
 function getItemStyles(
-  delta,
-  item,
-  initialOffset,
-  currentOffset,
-  currentLayout,
-  initialClientOffset,
-  canvasWidth
+  delta: XYCoor | null,
+  item: IWidgetItem,
+  initialOffset: XYCoor | null,
+  currentOffset: XYCoor | null,
+  currentLayout: string,
+  initialClientOffset: XYCoor | null,
+  canvasWidth: number
 ) {
   if (!initialOffset || !currentOffset) {
     return {
@@ -82,7 +107,13 @@ function getItemStyles(
   };
 }
 
-export const CustomDraggerLayer = ({ canvasWidth, onDragging }) => {
+export const CustomDraggerLayer = ({
+  canvasWidth,
+  onDragging
+}: {
+  canvasWidth: number;
+  onDragging: (isDragging: boolean) => void;
+}) => {
   const {
     itemType,
     isDragging,
@@ -103,12 +134,7 @@ export const CustomDraggerLayer = ({ canvasWidth, onDragging }) => {
     };
   });
 
-  const { currentLayout } = useEditorStore(
-    state => ({
-      currentLayout: state?.currentLayout
-    }),
-    shallow
-  );
+  const currentLayout = 'desktop';
 
   useEffect(() => {
     onDragging(isDragging);
