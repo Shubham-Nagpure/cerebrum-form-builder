@@ -1,10 +1,21 @@
 import { useState } from 'react';
 import { DraggableBox } from './DraggableBox';
+import { IWidget } from '../widgetsManager/component';
 
-export const ComponentManager = ({ componentTypes, zoomLevel }) => {
+// type TComponent = {
+//   name: string;
+// };
+
+export const ComponentManager = ({
+  componentTypes,
+  zoomLevel
+}: {
+  componentTypes: IWidget[];
+  zoomLevel: number;
+}) => {
   const [filteredComponents, setFilteredComponents] = useState(componentTypes);
 
-  const renderComponentCard = (component, index) => {
+  const renderComponentCard = (component: IWidget, index: number) => {
     return (
       <>
         <DraggableBox
@@ -17,7 +28,7 @@ export const ComponentManager = ({ componentTypes, zoomLevel }) => {
     );
   };
 
-  const renderList = (header, items) => {
+  const renderList = (header: string, items: IWidget[]) => {
     // if (isEmpty(items)) return null;
     return (
       <>
@@ -27,7 +38,11 @@ export const ComponentManager = ({ componentTypes, zoomLevel }) => {
     );
   };
   const segregateSections = () => {
-    const commonSection = {
+    type TCommonSection = {
+      title: string;
+      items: IWidget[];
+    };
+    const commonSection: TCommonSection = {
       title: 'commonly used',
       items: []
     };
@@ -38,6 +53,7 @@ export const ComponentManager = ({ componentTypes, zoomLevel }) => {
     });
     return <>{renderList(commonSection.title, commonSection.items)}</>;
   };
+
   return (
     <div className="components-container mx-3">
       <div className="input-icon">

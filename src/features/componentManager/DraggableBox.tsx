@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import { Rnd } from 'react-rnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { ItemTypes } from './ItemTypes';
 import Box from './Box';
-import cx from 'classnames';
-import { useEditorStore } from '../../stores/canvasStore';
+// import cx from 'classnames';
+// import { useEditorStore } from '../../stores/canvasStore';
 // import { useEditorStore } from '../../_stores/canvasStore';
-import { shallow } from 'zustand/shallow';
+// import { shallow } from 'zustand/shallow';
 import { IWidget } from '../widgetsManager/component';
 import { Layout } from '../canvasEditor/types';
 
-const getStyles = (isDragging, isSelectedComponent) => {
-  console.log('isDragging', isDragging, isSelectedComponent);
+const getStyles = (isDragging: boolean, isSelectedComponent: boolean) => {
+  // console.log('isDragging', isDragging, isSelectedComponent);
   return {
     position: 'absolute',
     zIndex: isSelectedComponent ? 2 : 1,
@@ -22,28 +22,57 @@ const getStyles = (isDragging, isSelectedComponent) => {
   };
 };
 
+declare type ResizeDirection =
+  | 'top'
+  | 'right'
+  | 'bottom'
+  | 'left'
+  | 'topRight'
+  | 'bottomRight'
+  | 'bottomLeft'
+  | 'topLeft';
+
+declare type ResizableDelta = {
+  width: number;
+  height: number;
+};
+
+declare type Position = {
+  x: number;
+  y: number;
+};
+
 type Props = {
+  key?: number;
   index: number;
   component: IWidget;
-  id: number;
-  title: string;
-  parent: string;
-  layouts: Layout;
-  canvasWidth: number;
-  inCanvas: boolean;
-  isSelectedComponent: boolean;
-  mode: string;
-  draggingStatusChanged: (value: boolean) => void;
-  hoveredComponent: object;
-  setSelectedComponent: (id: number, component: IWidget) => void;
-  onDragStop: () => void;
-  onComponentClick: () => void;
-  allComponents: [];
-  onResizeStop: () => void;
-  zoomLevel: number;
+  id?: number;
+  title?: string;
+  parent?: string;
+  layouts?: Layout;
+  canvasWidth?: number;
+  inCanvas?: boolean;
+  isSelectedComponent?: boolean;
+  mode?: string;
+  draggingStatusChanged?: (value: boolean) => void;
+  hoveredComponent?: object;
+  setSelectedComponent?: (id: number, component: IWidget) => void;
+  onDragStop?: () => void;
+  onComponentClick?: () => void;
+  allComponents?: [];
+  onResizeStop?: (
+    id: number,
+    e: MouseEvent | TouchEvent,
+    dir: ResizeDirection,
+    elementRef: HTMLElement,
+    delta: ResizableDelta,
+    position: Position
+  ) => void;
+  zoomLevel?: number;
   childComponents?: object | null;
   parentId?: number;
 };
+
 export const DraggableBox = ({
   index,
   component,
@@ -56,16 +85,16 @@ export const DraggableBox = ({
   isSelectedComponent,
   mode,
   draggingStatusChanged,
-  hoveredComponent,
+  // hoveredComponent,
   setSelectedComponent,
-  onComponentClick,
-  allComponents,
+  // onComponentClick,
+  // allComponents,
   onResizeStop,
   zoomLevel
 }: Props) => {
   const [isResizing, setResizing] = useState(false);
   const [isDragging2, setDragging] = useState(false);
-  const [canDrag, setCanDrag] = useState(true);
+  // const [canDrag, setCanDrag] = useState(true);
   // const [mouseOver, setMouseOver] = useState(false);
 
   const currentLayout = 'desktop';
@@ -178,35 +207,36 @@ export const DraggableBox = ({
     zoomLevel
   ]);
 
-  let _refProps = {};
+  // let _refProps = {};
 
-  if (mode === 'edit' && canDrag) {
-    _refProps = {
-      ref: drag
-    };
-  }
+  // if (mode === 'edit' && canDrag) {
+  //   _refProps = {
+  //     ref: drag
+  //   };
+  // }
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [isDragging, preview]);
 
-  const changeCanDrag = newState => {
-    setCanDrag(newState);
-  };
+  // const changeCanDrag = newState => {
+  //   setCanDrag(newState);
+  // };
 
-  const style2 = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: 'solid 1px #ddd',
-    background: '#f0f0f0',
-    top: '90px',
-    left: '10px'
-  };
+  // const style2 = {
+  //   display: 'flex',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   border: 'solid 1px #ddd',
+  //   background: '#f0f0f0',
+  //   top: '90px',
+  //   left: '10px'
+  // };
 
-  function computeWidth(currentLayoutOptions) {
+  function computeWidth(currentLayoutOptions: { height: 0; width: 0 }) {
     return `${currentLayoutOptions?.width}%`;
   }
+
   return (
     <div
       className={
@@ -222,7 +252,7 @@ export const DraggableBox = ({
       //         "d-none": component.component === "KanbanBoard",
       //       })
       // }
-      style={!inCanvas ? {} : { width: computeWidth() }}
+      style={!inCanvas ? {} : { width: computeWidth({ height: 0, width: 0 }) }}
     >
       {inCanvas ? (
         <div
@@ -230,9 +260,9 @@ export const DraggableBox = ({
           //   [className]: !!className,
           //   "draggable-box-in-editor": mode === "edit",
           // })}
-          onMouseEnter={e => console.log('mouse eneter in dragrabble box')}
+          onMouseEnter={() => console.log('mouse eneter in dragrabble box')}
           onMouseLeave={() => console.log('mouseLeave')}
-          style={getStyles(isDragging, isSelectedComponent)}
+          style={getStyles(isDragging, isSelectedComponent) as React.CSSProperties}
         >
           <Rnd
             style={{ ...style }}
@@ -255,7 +285,8 @@ export const DraggableBox = ({
             onResize={() => setResizing(true)}
             onDrag={e => {
               e.preventDefault();
-              e.stopImmediatePropagation();
+              e.stopPropagation();
+              // e.stopImmediatePropagation();
               if (!isDragging2) {
                 setDragging(true);
               }
@@ -264,7 +295,7 @@ export const DraggableBox = ({
             resizeHandleStyles={resizerStyles}
             // enableResizing={mode === 'edit' && !readOnly}
             // disableDragging={mode !== 'edit' || readOnly}
-            onDragStop={(e, direction) => {
+            onDragStop={() => {
               setDragging(false);
               // onDragStop(e, id, direction, currentLayout, layoutData);
             }}
@@ -292,9 +323,9 @@ export const DraggableBox = ({
                 mode={mode}
                 width={width}
                 height={layoutData.height - 4}
-                changeCanDrag={changeCanDrag}
-                onComponentClick={onComponentClick}
-                allComponents={allComponents}
+                // changeCanDrag={changeCanDrag}
+                // onComponentClick={onComponentClick}
+                // allComponents={allComponents}
               />
             </div>
           </Rnd>
@@ -307,7 +338,7 @@ export const DraggableBox = ({
             className="draggable-box"
             style={{ height: '100%' }}
           >
-            <Box component={component} id={id} isCanvas={inCanvas} />
+            <Box component={component} id={id} inCanvas={inCanvas} />
           </div>
         </>
       )}

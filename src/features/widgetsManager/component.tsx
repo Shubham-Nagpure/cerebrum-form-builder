@@ -13,7 +13,7 @@ interface IActions {
 }
 
 export interface IWidget {
-  name?: string;
+  name?: string | undefined;
   displayName?: string;
   description?: string;
   component?: string;
