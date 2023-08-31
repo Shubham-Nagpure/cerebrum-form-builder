@@ -17,9 +17,9 @@ export interface IWidget {
   displayName?: string;
   description?: string;
   component?: string;
-  defaultSize?: {
-    width?: number;
-    height?: number;
+  defaultSize: {
+    width: number;
+    height: number;
   };
   properties?: object;
   defaultChildren?: object;
