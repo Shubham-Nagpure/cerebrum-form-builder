@@ -15,11 +15,6 @@ export const BoxDragPreview = memo(({ item, canvasWidth }: Props) => {
     height = 100;
   }
 
-  if (item.id === undefined) {
-    width = item.component.defaultSize.width;
-    height = item.component.defaultSize.height;
-  }
-
   return (
     <div
       className="resizer-active draggable-box"
