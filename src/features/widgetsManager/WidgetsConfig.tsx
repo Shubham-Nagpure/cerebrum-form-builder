@@ -1,4 +1,4 @@
-import { IWidget } from './component';
+import { IWidget } from '../types';
 
 export const widgets: IWidget[] = [
   {
@@ -310,8 +310,8 @@ export const widgets: IWidget[] = [
         displayName: 'Border Radius',
         validation: {
           schema: {
-            type: 'union',
-            schemas: [{ type: 'string' }, { type: 'number' }]
+            type: 'union'
+            // schemas: [{ type: 'string' }, { type: 'number' }]
           }
         }
       },

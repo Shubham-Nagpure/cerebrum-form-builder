@@ -4,7 +4,17 @@ import { ItemTypes } from '../componentManager/ItemTypes';
 import { BoxDragPreview } from './BoxDragPreview';
 
 import { IWidgetItem } from './types';
-const layerStyles = {
+
+interface LayerStyles {
+  position: string;
+  pointerEvents: string;
+  zIndex: number;
+  left: number;
+  top: number;
+  width: string;
+  height: string;
+}
+const layerStyles: LayerStyles = {
   position: 'fixed',
   pointerEvents: 'none',
   zIndex: 100,
