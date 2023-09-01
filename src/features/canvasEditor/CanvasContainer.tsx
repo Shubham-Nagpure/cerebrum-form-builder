@@ -1,10 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useDrop, useDragLayer } from 'react-dnd';
 import { DraggableBox } from '../componentManager/DraggableBox';
 import { ItemTypes } from '../componentManager/ItemTypes';
 import { componentTypes } from '../widgetsManager/component';
 import { addNewWidgetToTheEditor } from '../../helpers/appUtils';
-import { IAppDefination, IWidgetItem, AddNewAppDefination } from '../types';
+import update from 'immutability-helper';
+import { IAppDefination, IWidgetItem, AddNewAppDefination, Layout } from '../types';
 
 const NO_OF_GRIDS = 43;
 
@@ -56,6 +57,7 @@ const CanvasContainer = ({
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
+    console.log('componenets', components);
     setBoxes(components);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(components)]);
@@ -76,6 +78,7 @@ const CanvasContainer = ({
   }, [draggingState]);
 
   const firstUpdate = useRef(true);
+
   useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
@@ -93,9 +96,25 @@ const CanvasContainer = ({
       }
     };
 
+    console.log('oldDef', newDefinition);
+
     appDefinitionChanged(newDefinition);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boxes]);
+
+  /**This Funtion set the boxes when new component is been drag */
+  const moveBox = useCallback(
+    (id: string, layouts: Layout) => {
+      setBoxes(
+        update(boxes, {
+          [id]: {
+            $merge: { layouts }
+          }
+        })
+      );
+    },
+    [boxes]
+  );
 
   const [, drop] = useDrop(
     () => ({
@@ -123,6 +142,8 @@ const CanvasContainer = ({
             snapToGrid,
             zoomLevel
           );
+          // console.log('newComponent', newComponent);
+          console.log('ZU', boxes, newComponent);
           const newBoxes = {
             ...boxes,
             [newComponent.id]: {
@@ -134,6 +155,7 @@ const CanvasContainer = ({
             }
           };
 
+          console.log('first', newBoxes);
           setBoxes(newBoxes);
         }
         return undefined;
@@ -144,7 +166,7 @@ const CanvasContainer = ({
         };
       }
     }),
-    []
+    [moveBox]
   );
 
   return (

@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
-import { AddNewAppDefination, IWidget } from '../features/types';
-import { ReactElement } from 'react';
+import { AddNewAppDefination, IWidget, IWidgetItem } from '../features/types';
+import { DropTargetMonitor } from 'react-dnd';
 
 export function computeComponentName(
-  componentType: IWidget,
+  componentType: string,
   currentComponents: AddNewAppDefination
 ) {
   const currentComponentsForKind = Object.values(currentComponents).filter(
@@ -31,9 +31,9 @@ export function computeComponentName(
 
 export const addNewWidgetToTheEditor = (
   componentMeta: IWidget,
-  eventMonitorObject: ReactElement,
+  eventMonitorObject: DropTargetMonitor<IWidgetItem, unknown>,
   currentComponents: AddNewAppDefination,
-  canvasBoundingRect: ReactElement,
+  canvasBoundingRect: DOMRect,
   currentLayout: string,
   shouldSnapToGrid: boolean,
   zoomLevel: number,
@@ -79,13 +79,15 @@ export const addNewWidgetToTheEditor = (
   const subContainerWidth = canvasBoundingRect.width;
 
   left = Math.round(
-    currentOffset?.x + currentOffset?.x * (1 - zoomLevel) - offsetFromLeftOfWindow
+    (currentOffset?.x || 0) +
+      (currentOffset?.x || 0) * (1 - zoomLevel) -
+      offsetFromLeftOfWindow
   );
   top = Math.round(
-    initialClientOffset?.y -
+    (initialClientOffset?.y || 0) -
       10 +
-      delta.y +
-      initialClientOffset?.y * (1 - zoomLevel) -
+      (delta?.y || 0) +
+      (initialClientOffset?.y || 0) * (1 - zoomLevel) -
       offsetFromTopOfWindow
   );
 

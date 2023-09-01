@@ -135,7 +135,7 @@ export type AddNewAppDefination = {
 
 export interface IPagesDefinition {
   [key: string]: {
-    components: AddNewAppDefination;
+    components: Record<string, ComponentDefinitation>;
     handle: string;
     name: string;
   };

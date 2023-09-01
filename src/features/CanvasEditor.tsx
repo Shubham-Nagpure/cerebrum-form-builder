@@ -56,7 +56,7 @@ const CanvasEditor = () => {
 
   const appDefinitionChanged = (newDefinition: IAppDefination) => {
     if (isEqual(appDefinition, newDefinition)) return;
-
+    console.log('newDefin', newDefinition);
     setAppDefinition({ ...newDefinition });
   };
 
