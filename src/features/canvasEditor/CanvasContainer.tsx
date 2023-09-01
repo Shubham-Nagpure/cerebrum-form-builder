@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDrop, useDragLayer } from 'react-dnd';
 import { DraggableBox } from '../componentManager/DraggableBox';
 import { ItemTypes } from '../componentManager/ItemTypes';
@@ -12,22 +12,22 @@ type Props = {
   canvasWidth: number;
   mode: string;
   snapToGrid: boolean;
-  onComponentClick: () => void;
-  onEvent: () => void;
+  zoomLevel: number;
+  deviceWindowWidth: number;
   appDefinition: IAppDefination;
   appDefinitionChanged: (newDefinition: IAppDefination) => void;
-  onComponentOptionChanged: () => void;
-  onComponentOptionsChanged: () => void;
-  appLoading: boolean;
-  setSelectedComponent: () => void;
-  zoomLevel: number;
-  removeComponent: () => void;
-  deviceWindowWidth: number;
-  selectedComponents: [];
-  darkMode: boolean;
-  onComponentHover: () => void;
-  hoveredComponent: () => void;
-  currentPageId: number;
+  currentPageId: string;
+  // onComponentOptionChanged: () => void;
+  // onComponentOptionsChanged: () => void;
+  // appLoading: boolean;
+  // onComponentClick: () => void;
+  // onEvent: () => void;
+  // setSelectedComponents: (id: string | number, component: IWidget) => void;
+  // removeComponent: () => void;
+  // selectedComponents: [];
+  // darkMode: boolean;
+  // onComponentHover: () => void;
+  // hoveredComponent: () => void;
 };
 const CanvasContainer = ({
   canvasWidth,
@@ -35,10 +35,10 @@ const CanvasContainer = ({
   snapToGrid,
   appDefinition,
   appDefinitionChanged,
-  appLoading,
-  setSelectedComponent,
+  // appLoading,
+  // setSelectedComponents,
   zoomLevel,
-  selectedComponents,
+  // selectedComponents,
   currentPageId
 }: Props) => {
   // const currentLayout = 'desktop';
@@ -54,8 +54,6 @@ const CanvasContainer = ({
 
   const [boxes, setBoxes] = useState<AddNewAppDefination>(components);
   const [isDragging, setIsDragging] = useState(false);
-  // const [isResizing, setIsResizing] = useState(false);
-  // const canvasRef = useRef({ current: null });
 
   useEffect(() => {
     setBoxes(components);
@@ -99,8 +97,6 @@ const CanvasContainer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boxes]);
 
-  React.useEffect(() => {}, [selectedComponents]);
-
   const [, drop] = useDrop(
     () => ({
       accept: [ItemTypes.BOX, ItemTypes.COMMENT],
@@ -116,26 +112,30 @@ const CanvasContainer = ({
         const componentMeta = componentTypes.find(
           component => component.component === item.component.component
         );
-        const newComponent = addNewWidgetToTheEditor(
-          componentMeta,
-          monitor,
-          boxes,
-          canvasBoundingRect,
-          item.currentLayout,
-          snapToGrid,
-          zoomLevel
-        );
-        const newBoxes = {
-          ...boxes,
-          [newComponent.id]: {
-            component: newComponent.component,
-            layouts: {
-              ...newComponent.layout
-            }
-          }
-        };
 
-        setBoxes(newBoxes);
+        if (componentMeta) {
+          const newComponent = addNewWidgetToTheEditor(
+            componentMeta,
+            monitor,
+            boxes,
+            canvasBoundingRect,
+            item.currentLayout,
+            snapToGrid,
+            zoomLevel
+          );
+          const newBoxes = {
+            ...boxes,
+            [newComponent.id]: {
+              component: newComponent.component,
+              layouts: {
+                ...newComponent.layout
+              },
+              withDefaultChildren: false
+            }
+          };
+
+          setBoxes(newBoxes);
+        }
         return undefined;
       },
       collect: monitor => {
@@ -175,7 +175,7 @@ const CanvasContainer = ({
                 mode={mode}
                 inCanvas={true}
                 zoomLevel={zoomLevel}
-                setSelectedComponent={setSelectedComponent}
+                // setSelectedComponents={setSelectedComponents}
                 isSelectedComponent={false}
                 // containerProps={{
                 //   mode,
@@ -205,7 +205,7 @@ const CanvasContainer = ({
             );
           }
         })}
-        {Object.keys(boxes).length === 0 && !appLoading && !isDragging && (
+        {Object.keys(boxes).length === 0 && false && !isDragging && (
           <div style={{ paddingTop: '10%' }}>
             <div className="mx-auto w-50 p-5 bg-light no-components-box">
               <center className="text-muted">

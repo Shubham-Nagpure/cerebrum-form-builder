@@ -45,9 +45,9 @@ const combineProperties = (widget: IWidget, universal: IUniversalProps) => {
     }
   };
 };
-export const componentTypes = widgets.map(widget => {
+export const componentTypes = widgets.map((widget: IWidget) => {
   return {
     ...combineProperties(widget, universalProps)
-    // definition: combineProperties(IWidget.definition, universalProps.definition, true)
+    //  definition: combineProperties(widget.definition, universalProps.definition)
   };
 });

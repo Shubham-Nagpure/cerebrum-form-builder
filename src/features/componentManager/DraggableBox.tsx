@@ -55,7 +55,7 @@ type Props = {
   mode?: string;
   draggingStatusChanged?: (value: boolean) => void;
   hoveredComponent?: object;
-  setSelectedComponent?: (id: number | string, component: IWidget) => void;
+  setSelectedComponents?: (id: number | string, component: IWidget) => void;
   onDragStop?: () => void;
   onComponentClick?: () => void;
   allComponents?: [];
@@ -83,7 +83,7 @@ export const DraggableBox = ({
   inCanvas,
   isSelectedComponent,
   draggingStatusChanged,
-  setSelectedComponent,
+  setSelectedComponents,
   onResizeStop,
   zoomLevel
 }: Props) => {
@@ -96,8 +96,8 @@ export const DraggableBox = ({
       draggingStatusChanged(isDragging2);
     }
 
-    if (isDragging2 && !isSelectedComponent && id && setSelectedComponent) {
-      setSelectedComponent(id, component);
+    if (isDragging2 && !isSelectedComponent && id && setSelectedComponents) {
+      setSelectedComponents(id, component);
     }
   }, [
     isDragging2,
@@ -105,7 +105,7 @@ export const DraggableBox = ({
     isSelectedComponent,
     id,
     component,
-    setSelectedComponent
+    setSelectedComponents
   ]);
 
   const defaultData = {

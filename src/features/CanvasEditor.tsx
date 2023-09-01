@@ -5,15 +5,16 @@ import { ComponentManager } from './componentManager/ComponentManager';
 import { componentTypes } from './widgetsManager/component';
 import CanvasContainer from './canvasEditor/CanvasContainer';
 import { CustomDraggerLayer } from './canvasEditor/CustomDraggerLayer';
-// import { useEditorStore } from './stores/canvasStore';
 import { isEqual, debounce } from 'lodash';
 import { IAppDefination } from './types';
+import { v4 as uuid } from 'uuid';
 
+const defaultPageId = uuid();
 const defaultDefinition = {
   showViewerNavigation: true,
-  homePageId: 1,
+  homePageId: defaultPageId,
   pages: {
-    1: {
+    [defaultPageId]: {
       components: {},
       handle: 'home',
       name: 'Home'
@@ -31,10 +32,11 @@ const defaultDefinition = {
 };
 
 const CanvasEditor = () => {
-  const canvasContainerRef = useRef();
+  const canvasContainerRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [appDefinition, setAppDefinition] = useState(defaultDefinition);
+  const [currentPage, setCurrentPage] = useState<string>(defaultPageId);
+  const [appDefinition, setAppDefinition] =
+    useState<IAppDefination>(defaultDefinition);
   const [rendering, setRendering] = useState(false);
 
   const zoomLevel = 1;
@@ -45,6 +47,12 @@ const CanvasEditor = () => {
     }, 500);
     run();
   }, []);
+
+  useEffect(() => {
+    if (!currentPage) {
+      setCurrentPage(uuid());
+    }
+  }, [currentPage]);
 
   const appDefinitionChanged = (newDefinition: IAppDefination) => {
     if (isEqual(appDefinition, newDefinition)) return;
@@ -92,9 +100,9 @@ const CanvasEditor = () => {
                           zoomLevel={zoomLevel}
                           deviceWindowWidth={100}
                           currentPageId={currentPage}
+                          // setSelectedComponents={setSelectedComponents}
                         />
                         <CustomDraggerLayer
-                          snapToGrid={true}
                           canvasWidth={1090}
                           onDragging={() => {
                             setIsDragging(isDragging);

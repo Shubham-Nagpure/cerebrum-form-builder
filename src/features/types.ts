@@ -9,10 +9,10 @@ export interface IEvent {
 }
 
 export interface IUniversalProps {
-  properties: Record<string, IPropertiesInterface>;
+  properties?: Record<string, IPropertiesInterface>;
   general: IGeneral;
-  others: Record<string, { type: string; displayName: string }>;
-  events: IEvent;
+  others?: Record<string, { type: string; displayName: string }>;
+  events?: IEvent | never[];
   styles: Record<string, IPropertiesInterface>;
   validate: boolean;
   generalStyles: {
@@ -22,7 +22,8 @@ export interface IUniversalProps {
     others: Record<string, IValues>;
     events: [];
     styles: Record<string, IValues>;
-    generalStyles: Record<string, IValues>;
+    generalStyles?: Record<string, IValues>;
+    properties?: Record<string, IValues>;
   };
 }
 
@@ -63,7 +64,7 @@ interface IParmas {
 }
 
 interface IValues {
-  value: string;
+  value: string | boolean;
 }
 
 interface ILayout {
@@ -88,7 +89,7 @@ export interface IWidget {
   defaultSize: { width: number; height: number };
   others?: Record<string, { type: string; displayName: string }>;
   properties?: Record<string, IPropertiesInterface>;
-  events?: IEvent;
+  events?: IEvent | never[];
   styles: Record<string, IPropertiesInterface>;
   exposedVariables: Record<string, object | boolean | string>;
   actions: {
@@ -98,9 +99,10 @@ export interface IWidget {
   }[];
   definition: {
     others: Record<string, IValues>;
-    properties: Record<string, IValues>;
     events: [];
     styles: Record<string, IValues>;
+    generalStyles?: Record<string, IValues>;
+    properties?: Record<string, IValues>;
   };
   defaultChildren?: IChildren[];
 }
@@ -113,7 +115,7 @@ export type Size = {
 };
 
 export type Layout = {
-  [key: string | number]: {
+  [key: string]: {
     top: number;
     height?: number;
     left: number;
@@ -123,64 +125,31 @@ export type Layout = {
 
 export type ComponentDefinitation = {
   component: IWidget;
-  layout: Layout;
+  layouts: Layout;
   withDefaultChildren: boolean;
 };
 
 export type AddNewAppDefination = {
-  [key: string]:
-    | ComponentDefinitation
-    | {
-        component: IWidget;
-        layouts: {
-          [x: number]: {
-            top: number;
-            left: number;
-          };
-        };
-      };
+  [key: string]: ComponentDefinitation;
 };
 
-// {
-//   pages: {
-//     [x: number]: {
-//       components: {
-//         [key: string]: ComponentDefinitation;
-//       };
-//       handle: string;
-//       name: string;
-//     } | {
-//       components: AddNewAppDefination;
-//       handle: string;
-//       name: string;
-//     };
-//   };
-//   showViewerNavigation: boolean;
-//   homePageId: number;
-
-// }
+export interface IPagesDefinition {
+  [key: string]: {
+    components: AddNewAppDefination;
+    handle: string;
+    name: string;
+  };
+}
 export interface IAppDefination {
   showViewerNavigation: boolean;
-  homePageId: number;
-  pages: {
-    [x: number]: {
-      components:
-        | { [key: string]: ComponentDefinitation }
-        | {
-            components: AddNewAppDefination;
-            handle: string;
-            name: string;
-          };
-      handle: string;
-      name: string;
-    };
-  };
+  homePageId: string;
+  pages: IPagesDefinition;
   globalSettings: {
     hideHeader: boolean;
     appInMaintenance: boolean;
     canvasMaxWidth: number;
     canvasMaxWidthType: string;
-    canvasMaxHeight: string;
+    canvasMaxHeight: number;
     canvasBackgroundColor: string;
     backgroundFxQuery: string;
   };
@@ -196,3 +165,5 @@ export interface IWidgetItem {
   zoomLevel: number;
   component: IWidget;
 }
+
+export interface ICommon extends IUniversalProps, IWidget {}
