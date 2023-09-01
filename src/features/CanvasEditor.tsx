@@ -7,8 +7,7 @@ import CanvasContainer from './canvasEditor/CanvasContainer';
 import { CustomDraggerLayer } from './canvasEditor/CustomDraggerLayer';
 // import { useEditorStore } from './stores/canvasStore';
 import { isEqual, debounce } from 'lodash';
-import { v4 as uuid } from 'uuid';
-import { IAppDefination } from './canvasEditor/types';
+import { IAppDefination } from './types';
 
 const defaultDefinition = {
   showViewerNavigation: true,
@@ -34,13 +33,11 @@ const defaultDefinition = {
 const CanvasEditor = () => {
   const canvasContainerRef = useRef();
   const [isDragging, setIsDragging] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [appDefinition, setAppDefinition] = useState(defaultDefinition);
-  const [selectedComponents, setSelectedComponents] = useState([]);
-  const [selectedComponent, setSelectedComponent] = useState({});
-  const [hoveredComponent, setHoveredComponent] = useState(null);
-  const [currentPageID, setCurrentPageID] = useState(1);
-  const [zoomLevel, setZoomLevel] = useState(1.0);
   const [rendering, setRendering] = useState(false);
+
+  const zoomLevel = 1;
 
   useEffect(() => {
     const run = debounce(() => {
@@ -49,86 +46,10 @@ const CanvasEditor = () => {
     run();
   }, []);
 
-  const usePrevious = value => {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    }, [value]);
-    return ref.current;
-  };
-
-  // useEffect(() => {
-  //   console.log("CanvasContainerRef", canvasContainerRef);
-  // });
-
-  const previous = usePrevious(appDefinition);
-
-  // useEffect(() => {
-  //   console.log("previeosu ststate", previous);
-  // }, [previous]);
-
-  const appDefinitionChanged = (newDefinition: IAppDefination, opts = {}) => {
-    let currentPageId = currentPageID;
+  const appDefinitionChanged = (newDefinition: IAppDefination) => {
     if (isEqual(appDefinition, newDefinition)) return;
-    if (opts?.versionChanged) {
-      currentPageId = newDefinition.homePageId;
-
-      setAppDefinition({ ...newDefinition });
-      setCurrentPageID(currentPageId);
-      // this.setState(
-      //   {
-      //     isSaving: true,
-      //     currentPageId: currentPageId,
-      //     appDefinition: newDefinition,
-      //     appDefinitionLocalVersion: uuid(),
-      //   },
-      //   () => {
-      //     if (!opts.skipAutoSave) this.autoSave();
-      //     this.switchPage(currentPageId);
-      //   }
-      // );
-      return;
-    }
 
     setAppDefinition({ ...newDefinition });
-  };
-
-  const handleComponentHover = id => {
-    // if (this.state.selectionInProgress) return;
-    setHoveredComponent(id);
-  };
-  const handleComponentClick = (id, component) => {
-    setSelectedComponents({ id, component });
-  };
-
-  const exportApp = () => {
-    console.log('App Defination', appDefinition);
-    const appDef = {
-      appId: uuid(),
-      createAt: '2023-08-24T11:42:43.379Z',
-      definition: appDefinition,
-      id: '',
-      name: 'v1',
-      updatedAt: '2023-08-24T11:42:43.379Z'
-    };
-    const data = {
-      appV2: {
-        appEnvironments: [],
-        appVersions: [{ ...appDef }],
-        createdAt: '',
-        currentVersionId: '',
-        dataQueries: [],
-        dataSourceOptions: [],
-        dataSources: [],
-        editingVersion: appDef
-      },
-      formbuilderVersion: '1'
-    };
-
-    const json = JSON.stringify(data, null, 2);
-    console.log('json', json);
-    const blob = new Blob([json], { type: 'application/json' });
-    const href = URL.createObjectURL(blob);
   };
 
   return (
@@ -141,27 +62,14 @@ const CanvasEditor = () => {
                 className="canvas-container align-items-center"
                 style={{
                   transform: `scale(1.0)`,
-                  // borderLeft:
-                  //   (this.state.editorMarginLeft
-                  //     ? this.state.editorMarginLeft - 1
-                  //     : this.state.editorMarginLeft) +
-                  //   `px solid ${this.computeCanvasBackgroundColor()}`,
+
                   height: '80%',
                   background: '#f4f6fa'
                 }}
-                onMouseUp={e => {
-                  // if (["real-canvas", "modal"].includes(e.target.className)) {
-                  //   this.setState({
-                  //     selectedComponents: [],
-                  //     currentSidebarTab: 2,
-                  //     hoveredComponent: false,
-                  //   });
-                  // }
+                onMouseUp={() => {
+                  console.log('On Mouse Cllicks');
                 }}
                 ref={canvasContainerRef}
-                // onScroll={() => {
-                //   selectionRef.current.checkScroll();
-                // }}
               >
                 <>
                   <div
@@ -183,16 +91,7 @@ const CanvasEditor = () => {
                           mode={'edit'}
                           zoomLevel={zoomLevel}
                           deviceWindowWidth={100}
-                          selectedComponents={selectedComponents}
-                          setSelectedComponent={setSelectedComponent}
-                          // handleUndo={handleUndo}
-                          // handleRedo={handleRedo}
-                          // removeComponent={removeComponent}
-                          onComponentClick={handleComponentClick}
-                          onComponentHover={handleComponentHover}
-                          hoveredComponent={hoveredComponent}
-                          // sideBarDebugger={sideBarDebugger}
-                          currentPageId={currentPageID}
+                          currentPageId={currentPage}
                         />
                         <CustomDraggerLayer
                           snapToGrid={true}

@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDrop, useDragLayer } from 'react-dnd';
 import { DraggableBox } from '../componentManager/DraggableBox';
-import { useEditorStore } from '../../stores/canvasStore';
-import { shallow } from 'zustand/shallow';
 import { ItemTypes } from '../componentManager/ItemTypes';
 import { componentTypes } from '../widgetsManager/component';
 import { addNewWidgetToTheEditor } from '../../helpers/appUtils';
-import { IAppDefination, IWidgetItem, AddNewAppDefination } from './types';
+import { IAppDefination, IWidgetItem, AddNewAppDefination } from '../types';
 
 const NO_OF_GRIDS = 43;
 
@@ -35,25 +33,15 @@ const CanvasContainer = ({
   canvasWidth,
   mode,
   snapToGrid,
-  onComponentClick,
-  onEvent,
   appDefinition,
   appDefinitionChanged,
-  onComponentOptionChanged,
-  onComponentOptionsChanged,
   appLoading,
   setSelectedComponent,
   zoomLevel,
-  removeComponent,
-  deviceWindowWidth,
   selectedComponents,
-  darkMode,
-  onComponentHover,
-  hoveredComponent,
   currentPageId
 }: Props) => {
-  console.log('hello', appDefinition);
-  const currentLayout = 'desktop';
+  // const currentLayout = 'desktop';
 
   const gridWidth = canvasWidth / NO_OF_GRIDS;
   const styles = {
@@ -67,7 +55,7 @@ const CanvasContainer = ({
   const [boxes, setBoxes] = useState<AddNewAppDefination>(components);
   const [isDragging, setIsDragging] = useState(false);
   // const [isResizing, setIsResizing] = useState(false);
-  const canvasRef = useRef({ current: null });
+  // const canvasRef = useRef({ current: null });
 
   useEffect(() => {
     setBoxes(components);
@@ -88,8 +76,6 @@ const CanvasContainer = ({
   useEffect(() => {
     setIsDragging(draggingState);
   }, [draggingState]);
-
-  console.log('Compo', selectedComponents);
 
   const firstUpdate = useRef(true);
   useEffect(() => {
@@ -173,32 +159,24 @@ const CanvasContainer = ({
         id="real-canvas"
         data-cy="real-canvas"
       >
-        {Object.keys(boxes).map(key => {
-          const box = boxes[key];
-          const addDefaultChildren = box.withDefaultChildren;
+        {Object.keys(boxes).map((key, index) => {
+          // const box = boxes[key];
           // if(!box.parent)
-          if (true) {
+          const isBox = true;
+          if (isBox) {
             return (
               <DraggableBox
                 canvasWidth={1090}
-                onEvent={onEvent}
-                onComponentOptionChanged={onComponentOptionChanged}
-                onComponentOptionsChanged={onComponentOptionsChanged}
-                key={key}
                 onResizeStop={() => console.log('Resize Func')}
                 onDragStop={() => console.log('onDragStop')}
-                paramUpdated={() => console.log('paramUpdated')}
                 id={key}
+                index={index}
                 {...boxes[key]}
                 mode={mode}
                 inCanvas={true}
                 zoomLevel={zoomLevel}
                 setSelectedComponent={setSelectedComponent}
-                isSelectedComponent={
-                  mode === 'edit'
-                    ? selectedComponents.find(component => component.id === key)
-                    : false
-                }
+                isSelectedComponent={false}
                 // containerProps={{
                 //   mode,
                 //   snapToGrid,

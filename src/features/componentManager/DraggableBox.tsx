@@ -4,11 +4,13 @@ import { Rnd } from 'react-rnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { ItemTypes } from './ItemTypes';
 import Box from './Box';
-import { shallow } from 'zustand/shallow';
-import { IWidget } from '../widgetsManager/component';
-import { Layout } from '../canvasEditor/types';
+import { IWidget } from '../types';
+import { Layout } from '../types';
 
-const getStyles = (isDragging: boolean, isSelectedComponent: boolean) => {
+const getStyles = (
+  isDragging: boolean,
+  isSelectedComponent: boolean | undefined
+): React.CSSProperties => {
   // console.log('isDragging', isDragging, isSelectedComponent);
   return {
     position: 'absolute',
@@ -43,7 +45,7 @@ type Props = {
   key?: number;
   index: number;
   component: IWidget;
-  id?: number;
+  id?: number | string;
   title?: string;
   parent?: string;
   layouts?: Layout;
@@ -53,19 +55,19 @@ type Props = {
   mode?: string;
   draggingStatusChanged?: (value: boolean) => void;
   hoveredComponent?: object;
-  setSelectedComponent?: (id: number, component: IWidget) => void;
+  setSelectedComponent?: (id: number | string, component: IWidget) => void;
   onDragStop?: () => void;
   onComponentClick?: () => void;
   allComponents?: [];
   onResizeStop?: (
-    id: number,
+    id: number | string,
     e: MouseEvent | TouchEvent,
     dir: ResizeDirection,
     elementRef: HTMLElement,
     delta: ResizableDelta,
     position: Position
   ) => void;
-  zoomLevel?: number;
+  zoomLevel: number;
   childComponents?: object | null;
   parentId?: number;
 };
@@ -80,33 +82,21 @@ export const DraggableBox = ({
   canvasWidth,
   inCanvas,
   isSelectedComponent,
-  mode,
   draggingStatusChanged,
-  // hoveredComponent,
   setSelectedComponent,
-  // onComponentClick,
-  // allComponents,
   onResizeStop,
   zoomLevel
 }: Props) => {
   const [isResizing, setResizing] = useState(false);
   const [isDragging2, setDragging] = useState(false);
-  // const [canDrag, setCanDrag] = useState(true);
-  // const [mouseOver, setMouseOver] = useState(false);
 
   const currentLayout = 'desktop';
-
-  // useEffect(() => {
-  //   setMouseOver(hoveredComponent === id);
-  // }, [hoveredComponent]);
-  //   const currentState = useCurrentState();
-
   useEffect(() => {
     if (draggingStatusChanged) {
       draggingStatusChanged(isDragging2);
     }
 
-    if (isDragging2 && !isSelectedComponent) {
+    if (isDragging2 && !isSelectedComponent && id && setSelectedComponent) {
       setSelectedComponent(id, component);
     }
   }, [
@@ -126,10 +116,12 @@ export const DraggableBox = ({
   };
   const NO_OF_GRIDS = 43;
   console.log(layouts);
-  const layoutData = inCanvas ? layouts[currentLayout] || defaultData : defaultData;
+  const layoutData = inCanvas
+    ? layouts?.[currentLayout] || defaultData
+    : defaultData;
 
-  const gridWidth = canvasWidth / NO_OF_GRIDS;
-  const width = (canvasWidth * layoutData.width) / NO_OF_GRIDS;
+  const gridWidth = canvasWidth ? canvasWidth / NO_OF_GRIDS : 0;
+  const width = ((canvasWidth || 0) * (layoutData?.width || 0)) / NO_OF_GRIDS;
 
   const style = {
     display: 'inline-block',
@@ -241,22 +233,10 @@ export const DraggableBox = ({
           ? ''
           : 'text-center align-items-center clearfix mb-2 col-md-4 d-flex'
       }
-      // className={
-      //   inCanvas
-      //     ? ""
-      //     : cx("text-center align-items-center clearfix mb-2", {
-      //         "col-md-4": component.component !== "KanbanBoard",
-      //         "d-none": component.component === "KanbanBoard",
-      //       })
-      // }
       style={!inCanvas ? {} : { width: computeWidth({ height: 0, width: 0 }) }}
     >
       {inCanvas ? (
         <div
-          // className={cx(`draggable-box widget-${id}`, {
-          //   [className]: !!className,
-          //   "draggable-box-in-editor": mode === "edit",
-          // })}
           onMouseEnter={() => console.log('mouse eneter in dragrabble box')}
           onMouseLeave={() => console.log('mouseLeave')}
           style={getStyles(isDragging, isSelectedComponent) as React.CSSProperties}
@@ -267,10 +247,10 @@ export const DraggableBox = ({
             dragGrid={[gridWidth, 10]}
             size={{
               width: width,
-              height: layoutData.height
+              height: layoutData?.height || 0
             }}
             position={{
-              x: layoutData ? (layoutData.left * canvasWidth) / 100 : 0,
+              x: layoutData ? (layoutData.left * (canvasWidth || 0)) / 100 : 0,
               y: layoutData ? layoutData.top : 0
             }}
             defaultSize={{}}
@@ -298,7 +278,8 @@ export const DraggableBox = ({
             }}
             onResizeStop={(e, direction, ref, d, position) => {
               setResizing(false);
-              onResizeStop(id, e, direction, ref, d, position);
+              if (onResizeStop && id)
+                onResizeStop(id, e, direction, ref, d, position);
             }}
             bounds={parent !== undefined ? `#canvas-${parent}` : '.real-canvas'}
             cancel={`div.table-responsive.jet-data-table, div.calendar-widget, div.text-input, .textarea, .map-widget, .range-slider, .kanban-container, div.real-canvas`}
@@ -309,21 +290,7 @@ export const DraggableBox = ({
               role="DraggableBox"
               style={isResizing ? { opacity: 0.5 } : { opacity: 1 }}
             >
-              {/* {mode === 'edit' &&
-                !readOnly &&
-                (mouseOver || isSelectedComponent) &&
-                !isResizing && <h1>ConfigHandle</h1>} */}
-              <Box
-                component={component}
-                id={id}
-                inCanvas={inCanvas}
-                mode={mode}
-                width={width}
-                height={layoutData.height - 4}
-                // changeCanDrag={changeCanDrag}
-                // onComponentClick={onComponentClick}
-                // allComponents={allComponents}
-              />
+              <Box component={component} inCanvas={inCanvas} />
             </div>
           </Rnd>
         </div>
@@ -335,7 +302,7 @@ export const DraggableBox = ({
             className="draggable-box"
             style={{ height: '100%' }}
           >
-            <Box component={component} id={id} inCanvas={inCanvas} />
+            <Box component={component} inCanvas={inCanvas} />
           </div>
         </>
       )}

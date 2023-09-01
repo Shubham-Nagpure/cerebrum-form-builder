@@ -5,20 +5,10 @@ import { CustomForm as Form } from '../coreComponent/Form';
 import { IWidget } from '../types';
 
 type Props = {
-  id: number;
-  inCanvas: boolean;
-  preview: () => void;
-  width: number;
-  height: number;
+  /**Component is present in canvas */
+  inCanvas: boolean | undefined;
+  /**Config properties of component */
   component: IWidget;
-  onComponentClick: boolean;
-  onEvent: () => void;
-  onComponentOptionChanged: () => void;
-  onComponentOptionsChanged: () => void;
-  changeCanDrag: boolean;
-  canvasWidth: number;
-  mode: string;
-  parentId: number;
 };
 
 const AllComponents: Record<string, React.FC> = {
@@ -27,20 +17,7 @@ const AllComponents: Record<string, React.FC> = {
 };
 
 const Box = (props: Props) => {
-  const {
-    // id,
-    inCanvas,
-    // preview,
-    // width,
-    // height,
-    component
-    // onComponentClick,
-    // onEvent,
-    // onComponentOptionChanged,
-    // onComponentOptionsChanged,
-    // mode,
-    // parentId
-  } = props;
+  const { inCanvas, component } = props;
   let styles = {
     height: '100%',
     padding: '1px'
@@ -58,20 +35,6 @@ const Box = (props: Props) => {
   useEffect(() => {
     if (resetComponent) setResetStatus(false);
   }, [resetComponent]);
-
-  // useEffect(() => {
-  //   setRenderCount(renderCount + 1);
-  //   if (renderCount > 10) {
-  //     setRenderCount(0);
-  //     const currentTime = new Date();
-  //     const number = currentTime - renderStartTime;
-  //     const timeDifference = Math.abs(number);
-  //     if (timeDifference < 1000) {
-  //       throw Error;
-  //     }
-  //     setRenderStartTime(currentTime);
-  //   }
-  // }, [JSON.stringify({})]);
 
   return (
     <Tooltip placement="top">

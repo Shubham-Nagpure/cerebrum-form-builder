@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { IWidgetItem, Size } from './types';
+import { IWidgetItem, Size } from '../types';
 
 type Props = {
   item: IWidgetItem;

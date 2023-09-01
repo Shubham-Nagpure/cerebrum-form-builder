@@ -2,19 +2,9 @@ import React, { useEffect } from 'react';
 import { useDragLayer } from 'react-dnd';
 import { ItemTypes } from '../componentManager/ItemTypes';
 import { BoxDragPreview } from './BoxDragPreview';
+import { IWidgetItem } from '../types';
 
-import { IWidgetItem } from './types';
-
-interface LayerStyles {
-  position: string;
-  pointerEvents: string;
-  zIndex: number;
-  left: number;
-  top: number;
-  width: string;
-  height: string;
-}
-const layerStyles: LayerStyles = {
+const layerStyles: React.CSSProperties = {
   position: 'fixed',
   pointerEvents: 'none',
   zIndex: 100,
@@ -32,40 +22,25 @@ function snapToGrid(canvasWidth: number, x: number, y: number) {
   return [snappedX, snappedY];
 }
 
-type Props = {
-  delta: {
-    y: number;
-  };
-  item: IWidgetItem;
-  initialOffset: {
-    x: number;
-    y: number;
-  };
-  currentOffset: {
-    x: number;
-    y: number;
-  };
-  currentLayout: string;
-  initialClientOffset: {
-    x: number;
-    y: number;
-  };
-  canvasWidth: number;
-};
-type XYCoor = {
-  x: number | undefined;
-  y: number | undefined;
-};
+interface XYCoord {
+  x: number;
+  y: number;
+}
 
-function getItemStyles(
-  delta: XYCoor | null,
+interface XYCoordWithNull {
+  x: number | null;
+  y: number | null;
+}
+
+const getItemStyles = (
+  delta: XYCoord | null | undefined,
   item: IWidgetItem,
-  initialOffset: XYCoor | null,
-  currentOffset: XYCoor | null,
+  initialOffset: XYCoordWithNull | null,
+  currentOffset: XYCoordWithNull | null,
   currentLayout: string,
-  initialClientOffset: XYCoor | null,
+  initialClientOffset: XYCoordWithNull | null,
   canvasWidth: number
-) {
+): React.CSSProperties => {
   if (!initialOffset || !currentOffset) {
     return {
       display: 'none'
@@ -74,40 +49,35 @@ function getItemStyles(
   let x, y;
 
   const id = item.id;
-  // const canvasContainerBoundingRect = document.getElementsByClassName('canvas-container')[0].getBoundingClientRect();
   const realCanvasBoundingRect = document
     .getElementsByClassName('real-canvas')[0]
     .getBoundingClientRect();
 
-  // const realCanvasDelta = realCanvasBoundingRect.x - canvasContainerBoundingRect.x;
-
   if (id) {
-    // Dragging within the canvas
-
-    x = Math.round((item.layouts[currentLayout].left * canvasWidth) / 100 + delta.x);
-    y = Math.round(item.layouts[currentLayout].top + delta.y);
+    x = Math.round(
+      (item.layouts[currentLayout].left * canvasWidth) / 100 + (delta?.x || 0)
+    );
+    y = Math.round(item.layouts[currentLayout].top + (delta?.y || 0));
   } else {
-    // New component being dragged  from components sidebar
     const offsetFromTopOfWindow = realCanvasBoundingRect.top;
     const offsetFromLeftOfWindow = realCanvasBoundingRect.left;
-    const zoomLevel = item.zoomLevel;
+    const zoomLevel = item.zoomLevel || 1;
 
     x = Math.round(
-      currentOffset.x + currentOffset.x * (1 - zoomLevel) - offsetFromLeftOfWindow
+      (currentOffset?.x || 0) +
+        (currentOffset?.x || 0) * (1 - zoomLevel) -
+        offsetFromLeftOfWindow
     );
     y = Math.round(
-      initialClientOffset.y -
+      (initialClientOffset?.y || 0) -
         10 +
-        delta.y +
-        currentOffset.y * (1 - zoomLevel) -
+        (delta?.y || 0 || 0) +
+        (currentOffset?.y || 0) * (1 - zoomLevel) -
         offsetFromTopOfWindow
     );
   }
 
   [x, y] = snapToGrid(canvasWidth, x, y);
-
-  // commented to fix issue that caused the dragged element to be out of position with mouse pointer
-  // x += realCanvasDelta;
 
   const transform = `translate(${x}px, ${y}px)`;
   return {
@@ -115,7 +85,7 @@ function getItemStyles(
     WebkitTransform: transform,
     width: 'fit-content'
   };
-}
+};
 
 export const CustomDraggerLayer = ({
   canvasWidth,

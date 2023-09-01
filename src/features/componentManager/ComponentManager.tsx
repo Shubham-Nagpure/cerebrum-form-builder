@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DraggableBox } from './DraggableBox';
-import { IWidget } from '../widgetsManager/component';
+import { IWidget } from '../types';
 
 export const ComponentManager = ({
   componentTypes,
@@ -15,12 +15,7 @@ export const ComponentManager = ({
   const renderComponentCard = (component: IWidget, index: number) => {
     return (
       <>
-        <DraggableBox
-          key={index}
-          index={index}
-          component={component}
-          zoomLevel={zoomLevel}
-        />
+        <DraggableBox index={index} component={component} zoomLevel={zoomLevel} />
       </>
     );
   };
@@ -52,6 +47,12 @@ export const ComponentManager = ({
     return <>{renderList(commonSection.title, commonSection.items)}</>;
   };
 
+  const filterComponentBySearch = (search: string) => {
+    if (search) {
+      setFilteredComponents(filteredComponents);
+    }
+  };
+
   return (
     <div className="components-container mx-3">
       <div className="input-icon">
@@ -59,9 +60,8 @@ export const ComponentManager = ({
           type="text"
           className="form-control mt-3 mb-2 "
           placeholder={'Search'}
-          //   value={searchQuery}
-          //   onChange={(e) => handleSearchQueryChange(e)}
           data-cy="widget-search-box"
+          onChange={event => filterComponentBySearch(event.target.value)}
         />
       </div>
       <div className="widgets-list m-0 col-sm-12 col-lg-12 row">

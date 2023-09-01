@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Form, Input, Typography } from 'antd';
 export const CustomForm = () => {
   return (
