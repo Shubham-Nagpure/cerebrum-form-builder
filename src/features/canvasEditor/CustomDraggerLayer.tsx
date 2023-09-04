@@ -14,14 +14,6 @@ const layerStyles: React.CSSProperties = {
   height: '100%'
 };
 
-function snapToGrid(canvasWidth: number, x: number, y: number) {
-  const gridX = canvasWidth / 43;
-
-  const snappedX = Math.round(x / gridX) * gridX;
-  const snappedY = Math.round(y / 10) * 10;
-  return [snappedX, snappedY];
-}
-
 interface XYCoord {
   x: number;
   y: number;
@@ -32,6 +24,26 @@ interface XYCoordWithNull {
   y: number | null;
 }
 
+function snapToGrid(canvasWidth: number, x: number, y: number) {
+  const gridX = canvasWidth / 43;
+
+  const snappedX = Math.round(x / gridX) * gridX;
+  const snappedY = Math.round(y / 10) * 10;
+  return [snappedX, snappedY];
+}
+
+/**
+ * This function return the object of transform properties of the component based on
+ * css properties of drag component
+ * @param delta
+ * @param item
+ * @param initialOffset
+ * @param currentOffset
+ * @param currentLayout
+ * @param initialClientOffset
+ * @param canvasWidth
+ * @returns Object of transform style properties
+ */
 const getItemStyles = (
   delta: XYCoord | null | undefined,
   item: IWidgetItem,
@@ -53,12 +65,18 @@ const getItemStyles = (
     .getElementsByClassName('real-canvas')[0]
     .getBoundingClientRect();
 
+  /**
+   * If id - undefined then new component is been drag
+   * else component is been drag within the canvas
+   */
   if (id) {
+    // Component is drag within the canvas
     x = Math.round(
       (item.layouts[currentLayout].left * canvasWidth) / 100 + (delta?.x || 0)
     );
     y = Math.round(item.layouts[currentLayout].top + (delta?.y || 0));
   } else {
+    // New component is been drag
     const offsetFromTopOfWindow = realCanvasBoundingRect.top;
     const offsetFromLeftOfWindow = realCanvasBoundingRect.left;
     const zoomLevel = item.zoomLevel || 1;
@@ -79,6 +97,10 @@ const getItemStyles = (
 
   [x, y] = snapToGrid(canvasWidth, x, y);
 
+  /**
+   * This variable containe the translate function which define the
+   * moving and reposition of the element along with X and Y axes
+   */
   const transform = `translate(${x}px, ${y}px)`;
   return {
     transform,
@@ -87,6 +109,11 @@ const getItemStyles = (
   };
 };
 
+/**
+ *
+ * @param param0
+ * @returns JSX of Draggable preview of the component that need to drag
+ */
 export const CustomDraggerLayer = ({
   canvasWidth,
   onDragging
@@ -94,6 +121,10 @@ export const CustomDraggerLayer = ({
   canvasWidth: number;
   onDragging: (isDragging: boolean) => void;
 }) => {
+  /**
+   * This is useDragLayer hook which recive moniter paramter
+   * which return the CSS properties of position of draggable layer
+   */
   const {
     itemType,
     isDragging,
@@ -121,7 +152,10 @@ export const CustomDraggerLayer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDragging]);
 
-  if (itemType === ItemTypes.COMMENT) return null;
+  /**
+   *
+   * @returns JSX function which return BoxDragPreview
+   */
   function renderItem() {
     switch (itemType) {
       case ItemTypes.BOX:

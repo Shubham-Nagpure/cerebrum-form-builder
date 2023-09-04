@@ -44,21 +44,48 @@ declare type Position = {
 type Props = {
   key?: number;
   index: number;
+  /**
+   * Wiget configuration of component
+   */
   component: IWidget;
   id?: number | string;
   title?: string;
   parent?: string;
+  /**
+   * Layout of the component
+   */
   layouts?: Layout;
   canvasWidth?: number;
   inCanvas?: boolean;
+  /**
+   * Return boolean of selection of component
+   */
   isSelectedComponent?: boolean;
   mode?: string;
   draggingStatusChanged?: (value: boolean) => void;
   hoveredComponent?: object;
   setSelectedComponents?: (id: number | string, component: IWidget) => void;
+  /**
+   * Funtion define while dragging the component in canvas
+   * @returns null
+   */
   onDragStop?: () => void;
+  /**
+   * Funtion define while click on the component to visible the properties tab
+   * @returns null
+   */
   onComponentClick?: () => void;
   allComponents?: [];
+  /**
+   *
+   * @param id - id of component
+   * @param e - mouse event
+   * @param dir - Direction of the resizing
+   * @param elementRef - reference of the element
+   * @param delta - Width and height as Css properties
+   * @param position - XY coordinates
+   * @returns null
+   */
   onResizeStop?: (
     id: number | string,
     e: MouseEvent | TouchEvent,
@@ -71,6 +98,13 @@ type Props = {
   childComponents?: object | null;
   parentId?: number;
 };
+
+/**
+ * DraggableBox
+ *
+ * Description: This is component render the component as Draggable if it is in canvas
+ * or in component that need to drag from the component library.
+ */
 
 export const DraggableBox = ({
   index,
@@ -115,7 +149,6 @@ export const DraggableBox = ({
     height: 500
   };
   const NO_OF_GRIDS = 43;
-  console.log(layouts);
   const layoutData = inCanvas
     ? layouts?.[currentLayout] || defaultData
     : defaultData;
@@ -164,7 +197,10 @@ export const DraggableBox = ({
     }
   };
 
-  // useDrag hook from rnd
+  /**
+   * useDrag is hook which define the properties and function of draggable compoenet
+   *
+   */
   const [{ isDragging }, drag, preview] = useDrag(() => {
     return {
       type: ItemTypes.BOX,
@@ -195,14 +231,6 @@ export const DraggableBox = ({
     currentLayout,
     zoomLevel
   ]);
-
-  // let _refProps = {};
-
-  // if (mode === 'edit' && canDrag) {
-  //   _refProps = {
-  //     ref: drag
-  //   };
-  // }
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });

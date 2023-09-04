@@ -2,6 +2,12 @@ import { useState } from 'react';
 import { DraggableBox } from './DraggableBox';
 import { IWidget } from '../types';
 
+/**
+ * ComponentManager
+ *
+ * Description: This compoenent return compoenets library in side bar which
+ * has all the component that need to drag
+ */
 export const ComponentManager = ({
   componentTypes,
   zoomLevel
@@ -9,9 +15,18 @@ export const ComponentManager = ({
   componentTypes: IWidget[];
   zoomLevel: number;
 }) => {
+  /**
+   * It filter the component base on the search text
+   */
   const [filteredComponents, setFilteredComponents] =
     useState<Array<IWidget>>(componentTypes);
 
+  /**
+   *
+   * @param component - IWiget configuration of component
+   * @param index - index of component from array
+   * @returns DraggableBox as draggable component
+   */
   const renderComponentCard = (component: IWidget, index: number) => {
     return (
       <>
@@ -20,6 +35,12 @@ export const ComponentManager = ({
     );
   };
 
+  /**
+   *
+   * @param header Type of component
+   * @param items IWiget configuration of component with universal properties
+   * @returns JSX of DraggableBox
+   */
   const renderList = (header: string, items: IWidget[]) => {
     // if (isEmpty(items)) return null;
     return (
@@ -29,6 +50,11 @@ export const ComponentManager = ({
       </>
     );
   };
+
+  /**
+   * Function define the logic which use to segregate the component by section
+   * @returns JSX of DraggableBox
+   */
   const segregateSections = () => {
     type TCommonSection = {
       title: string;
@@ -39,14 +65,24 @@ export const ComponentManager = ({
       items: []
     };
 
+    /**
+     * Need to define list of section of component
+     */
     const commonItems: string[] = ['Button', 'Form'];
 
+    /**
+     * Filter compoenent as per search text
+     */
     filteredComponents.forEach(f => {
       if (commonItems.includes(f.name)) commonSection.items.push(f);
     });
     return <>{renderList(commonSection.title, commonSection.items)}</>;
   };
 
+  /**
+   *
+   * @param search search text - component that need to search
+   */
   const filterComponentBySearch = (search: string) => {
     if (search) {
       setFilteredComponents(filteredComponents);

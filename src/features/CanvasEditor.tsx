@@ -5,14 +5,24 @@ import { ComponentManager } from './componentManager/ComponentManager';
 import { componentTypes } from './widgetsManager/component';
 import CanvasContainer from './canvasEditor/CanvasContainer';
 import { CustomDraggerLayer } from './canvasEditor/CustomDraggerLayer';
-import { isEqual, debounce } from 'lodash';
+import { isEqual } from 'lodash';
 import { IAppDefination } from './types';
 import { v4 as uuid } from 'uuid';
 
+/**
+ * Create unique value of id
+ */
 const defaultPageId = uuid();
+
+/**
+ * Default JSON for app object
+ */
 const defaultDefinition = {
   showViewerNavigation: true,
   homePageId: defaultPageId,
+  /**
+   * Object of pages with component details
+   */
   pages: {
     [defaultPageId]: {
       components: {},
@@ -20,9 +30,11 @@ const defaultDefinition = {
       name: 'Home'
     }
   },
+  /**
+   * Global setting of canvas UI
+   */
   globalSettings: {
     hideHeader: false,
-    appInMaintenance: false,
     canvasMaxWidth: 1292,
     canvasMaxWidthType: 'px',
     canvasMaxHeight: 2400,
@@ -31,21 +43,46 @@ const defaultDefinition = {
   }
 };
 
+/**
+ * CanvasEditor
+ *
+ * Description: This return entire canvas and component library
+ */
+
 const CanvasEditor = () => {
   const canvasContainerRef = useRef<HTMLInputElement>(null);
+  /**
+   * set isDragging when component Drag
+   */
   const [isDragging, setIsDragging] = useState(false);
+  /**
+   * set the current Page
+   */
   const [currentPage, setCurrentPage] = useState<string>(defaultPageId);
+  /**
+   * set the app Definition of the project
+   */
   const [appDefinition, setAppDefinition] =
     useState<IAppDefination>(defaultDefinition);
-  const [rendering, setRendering] = useState(false);
+  /**
+   * set rendering till page gets loaded for first time
+   *  - this is now working  but incase for the first time if
+   *    component is does not drag the we have to add it
+   */
+  // const [rendering, setRendering] = useState(stubTrue);
 
   const zoomLevel = 1;
 
+  /**
+   * Wait for 500 seconds to page get loaded
+   * - this is now working  but incase for the first time if
+   *    component is does not drag the we have to add it
+   */
   useEffect(() => {
-    const run = debounce(() => {
-      setRendering(true);
-    }, 500);
-    run();
+    // const run = debounce(() => {
+    //   setRendering(true);
+    // }, 500);
+    // run();
   }, []);
 
   useEffect(() => {
@@ -54,9 +91,13 @@ const CanvasEditor = () => {
     }
   }, [currentPage]);
 
+  /**
+   * set the new app definition
+   * @param newDefinition - newDefinition of IAppDefination Interface
+   * @returns
+   */
   const appDefinitionChanged = (newDefinition: IAppDefination) => {
     if (isEqual(appDefinition, newDefinition)) return;
-    console.log('newDefin', newDefinition);
     setAppDefinition({ ...newDefinition });
   };
 
@@ -89,27 +130,27 @@ const CanvasEditor = () => {
                       backgroundColor: '#edeff5'
                     }}
                   >
-                    {rendering && (
-                      <>
-                        <CanvasContainer
-                          canvasWidth={1090}
-                          appDefinition={appDefinition}
-                          appDefinitionChanged={appDefinitionChanged}
-                          snapToGrid={true}
-                          mode={'edit'}
-                          zoomLevel={zoomLevel}
-                          deviceWindowWidth={100}
-                          currentPageId={currentPage}
-                          // setSelectedComponents={setSelectedComponents}
-                        />
-                        <CustomDraggerLayer
-                          canvasWidth={1090}
-                          onDragging={() => {
-                            setIsDragging(isDragging);
-                          }}
-                        />
-                      </>
-                    )}
+                    {/* {true && ( */}
+                    <>
+                      <CanvasContainer
+                        canvasWidth={1090}
+                        appDefinition={appDefinition}
+                        appDefinitionChanged={appDefinitionChanged}
+                        snapToGrid={true}
+                        mode={'edit'}
+                        zoomLevel={zoomLevel}
+                        deviceWindowWidth={100}
+                        currentPageId={currentPage}
+                        // setSelectedComponents={setSelectedComponents}
+                      />
+                      <CustomDraggerLayer
+                        canvasWidth={1090}
+                        onDragging={() => {
+                          setIsDragging(isDragging);
+                        }}
+                      />
+                    </>
+                    {/* )} */}
                   </div>
                 </>
               </div>

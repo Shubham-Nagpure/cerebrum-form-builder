@@ -146,7 +146,6 @@ export interface IAppDefination {
   pages: IPagesDefinition;
   globalSettings: {
     hideHeader: boolean;
-    appInMaintenance: boolean;
     canvasMaxWidth: number;
     canvasMaxWidthType: string;
     canvasMaxHeight: number;

@@ -30,6 +30,13 @@ type Props = {
   // onComponentHover: () => void;
   // hoveredComponent: () => void;
 };
+
+/**
+ * CanvasContainer
+ *
+ * Description - return the empty canvas of no component is been drag
+ * else lis of draggable component
+ */
 const CanvasContainer = ({
   canvasWidth,
   mode,
@@ -44,6 +51,9 @@ const CanvasContainer = ({
 }: Props) => {
   // const currentLayout = 'desktop';
 
+  const components = appDefinition.pages[currentPageId]?.components ?? {};
+  const [boxes, setBoxes] = useState<AddNewAppDefination>(components);
+  const [isDragging, setIsDragging] = useState(false);
   const gridWidth = canvasWidth / NO_OF_GRIDS;
   const styles = {
     width: '100%',
@@ -51,17 +61,15 @@ const CanvasContainer = ({
     backgroundSize: `${gridWidth}px 10px`
   };
 
-  const components = appDefinition.pages[currentPageId]?.components ?? {};
-
-  const [boxes, setBoxes] = useState<AddNewAppDefination>(components);
-  const [isDragging, setIsDragging] = useState(false);
-
   useEffect(() => {
     console.log('componenets', components);
     setBoxes(components);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(components)]);
 
+  /**
+   * This is hook which set the Draggable state of the component
+   */
   const { draggingState } = useDragLayer(monitor => {
     if (monitor.isDragging()) {
       if (!monitor.getItem().parent) {
@@ -79,6 +87,9 @@ const CanvasContainer = ({
 
   const firstUpdate = useRef(true);
 
+  /**
+   * set call appDefinitionChanged function when boxes value is update
+   */
   useEffect(() => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
@@ -96,13 +107,14 @@ const CanvasContainer = ({
       }
     };
 
-    console.log('oldDef', newDefinition);
-
     appDefinitionChanged(newDefinition);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boxes]);
 
-  /**This Funtion set the boxes when new component is been drag */
+  /**
+   * This Funtion set the boxes value when new component is been drag
+   *
+   */
   const moveBox = useCallback(
     (id: string, layouts: Layout) => {
       setBoxes(
@@ -116,9 +128,13 @@ const CanvasContainer = ({
     [boxes]
   );
 
+  /**
+   * This is hook which define the drop target which get the component
+   * that has been drag and set box variable
+   */
   const [, drop] = useDrop(
     () => ({
-      accept: [ItemTypes.BOX, ItemTypes.COMMENT],
+      accept: [ItemTypes.BOX],
       async drop(item: IWidgetItem, monitor) {
         if (item.parent) {
           return;
@@ -142,8 +158,6 @@ const CanvasContainer = ({
             snapToGrid,
             zoomLevel
           );
-          // console.log('newComponent', newComponent);
-          console.log('ZU', boxes, newComponent);
           const newBoxes = {
             ...boxes,
             [newComponent.id]: {
@@ -154,8 +168,6 @@ const CanvasContainer = ({
               withDefaultChildren: false
             }
           };
-
-          console.log('first', newBoxes);
           setBoxes(newBoxes);
         }
         return undefined;

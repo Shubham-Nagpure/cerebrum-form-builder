@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Tooltip } from 'antd';
-import { CustomButton as Button } from '../coreComponent/Button';
-import { CustomForm as Form } from '../coreComponent/Form';
 import { IWidget } from '../types';
+import AllComponents from '../coreComponent';
 
 type Props = {
   /**Component is present in canvas */
@@ -11,11 +10,12 @@ type Props = {
   component: IWidget;
 };
 
-const AllComponents: Record<string, React.FC> = {
-  Button,
-  Form
-};
-
+/**
+ * Box
+ *
+ * Description: It return the Box with the name of component if it not in canvas
+ * and when drag into canvas return the core component
+ */
 const Box = (props: Props) => {
   const { inCanvas, component } = props;
   let styles = {
@@ -29,6 +29,9 @@ const Box = (props: Props) => {
     };
   }
 
+  /**
+   * This return JSX of the component that need to drag
+   */
   const ComponentToRender = AllComponents[component.component];
   const [resetComponent, setResetStatus] = useState(false);
 

@@ -1,6 +1,17 @@
 import { memo } from 'react';
 import { IWidgetItem, Size } from '../types';
 
+/**
+ * BoxDragPreview
+ *
+ * Description: This is component render the preview drag box on canvas
+ * before visibility of the component.
+ *
+ * Props:
+ *    - props1: component detals with default configuration
+ *    - porps2: canvasWidth
+ */
+
 type Props = {
   item: IWidgetItem;
   canvasWidth: number;

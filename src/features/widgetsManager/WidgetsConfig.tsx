@@ -1,5 +1,8 @@
 import { IWidget } from '../types';
 
+/**
+ * Widget of all the configuration of UI Component
+ */
 export const widgets: IWidget[] = [
   {
     name: 'Button',

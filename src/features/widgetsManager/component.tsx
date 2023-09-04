@@ -1,6 +1,9 @@
 import { widgets } from './WidgetsConfig';
 import { IUniversalProps, IWidget } from '../types';
 
+/**
+ * This is object contain universal props for component
+ */
 const universalProps: IUniversalProps = {
   properties: {},
   general: {
@@ -45,6 +48,10 @@ const combineProperties = (widget: IWidget, universal: IUniversalProps) => {
     }
   };
 };
+
+/**
+ * This variable return the combination of universal and by default properties of widget
+ */
 export const componentTypes = widgets.map((widget: IWidget) => {
   return {
     ...combineProperties(widget, universalProps)

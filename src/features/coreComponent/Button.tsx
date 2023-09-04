@@ -1,5 +1,9 @@
 import { Button } from 'antd';
 
+/**
+ *
+ * @returns Cerbrum Button Component
+ */
 export const CustomButton = () => {
   return (
     <div className="d-flex flex-column">

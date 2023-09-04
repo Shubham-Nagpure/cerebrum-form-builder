@@ -1,4 +1,9 @@
 import { Button, Form, Input, Typography } from 'antd';
+
+/**
+ *
+ * @returns return Form component
+ */
 export const CustomForm = () => {
   return (
     <Form
