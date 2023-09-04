@@ -8,6 +8,7 @@ import { CustomDraggerLayer } from './canvasEditor/CustomDraggerLayer';
 import { isEqual, debounce } from 'lodash';
 import { IAppDefination } from './types';
 import { v4 as uuid } from 'uuid';
+import projectApi from '../services/api/project';
 
 const defaultPageId = uuid();
 const defaultDefinition = {
@@ -40,6 +41,16 @@ const CanvasEditor = () => {
   const [rendering, setRendering] = useState(false);
 
   const zoomLevel = 1;
+
+  const { data, isLoading } = projectApi.useGetTodosQuery('abc');
+
+  useEffect(() => {
+    console.log('API CALLS WILL BE TESTED HERE');
+
+    if (data) {
+      console.log('DATA :', data);
+    }
+  }, [data]);
 
   useEffect(() => {
     const run = debounce(() => {

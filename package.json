@@ -14,7 +14,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
     "antd": "^5.8.4",
+    "axios": "^1.5.0",
     "classnames": "^2.3.2",
     "immutability-helper": "^3.1.1",
     "lodash": "^4.17.21",
@@ -24,6 +26,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.1.2",
     "react-rnd": "^10.4.1",
     "sass": "^1.66.1",
     "uuid": "^9.0.0",
