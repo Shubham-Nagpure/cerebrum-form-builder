@@ -1,23 +1,47 @@
 import { useState } from 'react';
 import { DraggableBox } from './DraggableBox';
+import { IWidget } from '../types';
 
-export const ComponentManager = ({ componentTypes, zoomLevel }) => {
-  const [filteredComponents, setFilteredComponents] = useState(componentTypes);
+/**
+ * ComponentManager
+ *
+ * Description: This compoenent return compoenets library in side bar which
+ * has all the component that need to drag
+ */
+export const ComponentManager = ({
+  componentTypes,
+  zoomLevel
+}: {
+  componentTypes: IWidget[];
+  zoomLevel: number;
+}) => {
+  /**
+   * It filter the component base on the search text
+   */
+  const [filteredComponents, setFilteredComponents] =
+    useState<Array<IWidget>>(componentTypes);
 
-  const renderComponentCard = (component, index) => {
+  /**
+   *
+   * @param component - IWiget configuration of component
+   * @param index - index of component from array
+   * @returns DraggableBox as draggable component
+   */
+  const renderComponentCard = (component: IWidget, index: number) => {
     return (
       <>
-        <DraggableBox
-          key={index}
-          index={index}
-          component={component}
-          zoomLevel={zoomLevel}
-        />
+        <DraggableBox index={index} component={component} zoomLevel={zoomLevel} />
       </>
     );
   };
 
-  const renderList = (header, items) => {
+  /**
+   *
+   * @param header Type of component
+   * @param items IWiget configuration of component with universal properties
+   * @returns JSX of DraggableBox
+   */
+  const renderList = (header: string, items: IWidget[]) => {
     // if (isEmpty(items)) return null;
     return (
       <>
@@ -26,18 +50,45 @@ export const ComponentManager = ({ componentTypes, zoomLevel }) => {
       </>
     );
   };
+
+  /**
+   * Function define the logic which use to segregate the component by section
+   * @returns JSX of DraggableBox
+   */
   const segregateSections = () => {
-    const commonSection = {
+    type TCommonSection = {
+      title: string;
+      items: IWidget[];
+    };
+    const commonSection: TCommonSection = {
       title: 'commonly used',
       items: []
     };
-    const commonItems = ['Button', 'Card', 'Table', 'Form'];
 
+    /**
+     * Need to define list of section of component
+     */
+    const commonItems: string[] = ['Button', 'Form'];
+
+    /**
+     * Filter compoenent as per search text
+     */
     filteredComponents.forEach(f => {
       if (commonItems.includes(f.name)) commonSection.items.push(f);
     });
     return <>{renderList(commonSection.title, commonSection.items)}</>;
   };
+
+  /**
+   *
+   * @param search search text - component that need to search
+   */
+  const filterComponentBySearch = (search: string) => {
+    if (search) {
+      setFilteredComponents(filteredComponents);
+    }
+  };
+
   return (
     <div className="components-container mx-3">
       <div className="input-icon">
@@ -45,9 +96,8 @@ export const ComponentManager = ({ componentTypes, zoomLevel }) => {
           type="text"
           className="form-control mt-3 mb-2 "
           placeholder={'Search'}
-          //   value={searchQuery}
-          //   onChange={(e) => handleSearchQueryChange(e)}
           data-cy="widget-search-box"
+          onChange={event => filterComponentBySearch(event.target.value)}
         />
       </div>
       <div className="widgets-list m-0 col-sm-12 col-lg-12 row">

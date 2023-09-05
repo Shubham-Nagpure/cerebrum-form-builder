@@ -1,22 +1,31 @@
-import { memo, useState, useEffect } from 'react';
+import { memo } from 'react';
+import { IWidgetItem, Size } from '../types';
 
-export const BoxDragPreview = memo(({ item, canvasWidth }) => {
-  const [tickTock, setTickTock] = useState(false);
-  useEffect(
-    function subscribeToIntervalTick() {
-      const interval = setInterval(() => setTickTock(!tickTock), 500);
-      return () => clearInterval(interval);
-    },
-    [tickTock]
-  );
+/**
+ * BoxDragPreview
+ *
+ * Description: This is component render the preview drag box on canvas
+ * before visibility of the component.
+ *
+ * Props:
+ *    - props1: component detals with default configuration
+ *    - porps2: canvasWidth
+ */
 
+type Props = {
+  item: IWidgetItem;
+  canvasWidth: number;
+};
+
+export const BoxDragPreview = memo(({ item, canvasWidth }: Props) => {
   const layouts = item.layouts;
-  let { width, height } = layouts ? 100 : {};
+  let { width, height }: Size = item.component.defaultSize;
 
-  if (item.id === undefined) {
-    width = item.component.defaultSize.width;
-    height = item.component.defaultSize.height;
+  if (layouts) {
+    width = 100;
+    height = 100;
   }
+
   return (
     <div
       className="resizer-active draggable-box"

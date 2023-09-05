@@ -1,6 +1,10 @@
 import { widgets } from './WidgetsConfig';
+import { IUniversalProps, IWidget } from '../types';
 
-const universalProps = {
+/**
+ * This is object contain universal props for component
+ */
+const universalProps: IUniversalProps = {
   properties: {},
   general: {
     tooltip: {
@@ -26,27 +30,31 @@ const universalProps = {
   }
 };
 
-const combineProperties = (widget, universal, isArray = false) => {
+const combineProperties = (widget: IWidget, universal: IUniversalProps) => {
   return {
     ...universal,
     ...widget,
     properties: { ...universal.properties, ...widget.properties },
-    general: { ...universal.general, ...widget.general },
+    general: { ...universal.general },
     others: { ...universal.others, ...widget.others },
-    events: isArray
-      ? [...universal.events, ...widget.events]
-      : { ...universal.events, ...widget.events },
+    events:
+      Array.isArray(universal.events) || Array.isArray(widget.events)
+        ? []
+        : { ...universal.events, ...widget.events },
     styles: { ...universal.styles, ...widget.styles },
-    generalStyles: { ...universal.generalStyles, ...widget.generalStyles },
+    generalStyles: { ...universal.generalStyles },
     exposedVariables: {
-      ...universal.exposedVariables,
       ...widget.exposedVariables
     }
   };
 };
-export const componentTypes = widgets.map(widget => {
+
+/**
+ * This variable return the combination of universal and by default properties of widget
+ */
+export const componentTypes = widgets.map((widget: IWidget) => {
   return {
-    ...combineProperties(widget, universalProps),
-    definition: combineProperties(widget.definition, universalProps.definition, true)
+    ...combineProperties(widget, universalProps)
+    //  definition: combineProperties(widget.definition, universalProps.definition)
   };
 });
